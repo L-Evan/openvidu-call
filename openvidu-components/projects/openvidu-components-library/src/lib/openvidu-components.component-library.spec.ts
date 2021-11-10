@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OpenviduComponentsComponent } from './openvidu-components.component';
+import { OpenviduComponentsLibraryComponent } from './openvidu-components-library.component';
 
 describe('OpenviduComponentsComponent', () => {
-  let component: OpenviduComponentsComponent;
-  let fixture: ComponentFixture<OpenviduComponentsComponent>;
+  let component: OpenviduComponentsLibraryComponent;
+  let fixture: ComponentFixture<OpenviduComponentsLibraryComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ OpenviduComponentsComponent ]
+      declarations: [ OpenviduComponentsLibraryComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(OpenviduComponentsComponent);
+    fixture = TestBed.createComponent(OpenviduComponentsLibraryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

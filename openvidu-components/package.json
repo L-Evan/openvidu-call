@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "lib:build": "ng build openvidu-components --watch",
+    "lib:build": "ng build openvidu-components-library --watch",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -40,7 +40,7 @@
     "karma-coverage-istanbul-reporter": "3.0.3",
     "karma-jasmine": "4.0.1",
     "karma-jasmine-html-reporter": "1.7.0",
-    "ng-packagr": "^13.0.0",
+    "ng-packagr": "13.0.3",
     "protractor": "7.0.0",
     "ts-node": "10.4.0",
     "tslint": "6.1.3",

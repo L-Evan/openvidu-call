@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { OpenviduComponentsService } from './openvidu-components.service';
+import { OpenviduComponentsLibraryService } from './openvidu-components-library.service';
 
 describe('OpenviduComponentsService', () => {
-  let service: OpenviduComponentsService;
+  let service: OpenviduComponentsLibraryService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(OpenviduComponentsService);
+    service = TestBed.inject(OpenviduComponentsLibraryService);
   });
 
   it('should be created', () => {
