@@ -24,7 +24,7 @@ Run `npm run lib:build` for building the openvidu-components library
 For generate new components in openvidu-components-library:
 
 ```bash
-ng generate component --project openvidu-components-library
+ng g component components/component-name --project=openvidu-components-library
 ```
 
 
