@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // openvidu-components-library
-import {OpenviduComponentsModule} from 'projects/openvidu-components-library/src/lib/openvidu-components.module';
+import {OpenviduComponentsLibraryModule} from 'projects/openvidu-components-library/src/lib/openvidu-components-library.module';
 import { ToolbarComponent } from 'projects/openvidu-components-library/src/lib/toolbar/toolbar.component';
 
 @NgModule({
@@ -15,7 +15,7 @@ import { ToolbarComponent } from 'projects/openvidu-components-library/src/lib/t
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    OpenviduComponentsModule
+    OpenviduComponentsLibraryModule
   ],
   providers: [ToolbarComponent],
   bootstrap: [AppComponent]

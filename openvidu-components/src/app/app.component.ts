@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ToolbarComponent } from 'projects/openvidu-components-library/src/lib/toolbar/toolbar.component';
-import {OpenviduComponentsService} from 'projects/openvidu-components-library/src/lib/openvidu-components.service';
+import {OpenviduComponentsLibraryService} from 'projects/openvidu-components-library/src/lib/openvidu-components-library.service';
+import { UserModel } from 'projects/openvidu-components-library/src/lib/models/User';
 
 @Component({
   selector: 'app-root',
@@ -11,11 +12,25 @@ export class AppComponent {
   title = 'openvidu-components';
   toolbarColor = ''
 
-  constructor(private componentService: OpenviduComponentsService, private component: ToolbarComponent){}
+  participants: UserModelPro[] =  [];
+
+  constructor(private componentService: OpenviduComponentsLibraryService, private component: ToolbarComponent){
+
+    this.participants = [new UserModelPro()];
+  }
 
   clickButton() {
     console.log('button clicked');
     this.componentService.changeFontColor();
     this.toolbarColor = this.component.getRandomColor();
+  }
+}
+
+export class UserModelPro extends UserModel{
+
+  surname: string = '';
+  constructor(){
+    super();
+    this.surname = 'IM PRO';
   }
 }

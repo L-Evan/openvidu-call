@@ -5,5 +5,13 @@
 
 <ng-content></ng-content>
 
-<p>Button content</p>
-<ng-content select="[buttons]"></ng-content>
+<div #content>
+  <ng-content select="[participants]"></ng-content>
+</div>
+
+<!-- Default content -->
+<span *ngIf="!content.innerHTML">
+  <div *ngFor="let participant of participants">
+    <li>{{participant.name}}</li>
+  </div>
+</span>

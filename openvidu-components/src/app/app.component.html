@@ -21,13 +21,9 @@
 
   <ov-toolbar [color]="toolbarColor">
 
-    <div>
-      <p>Text injected from parent to angular component</p>
-    </div>
-
-    <div buttons>
-      <p>Dynamic buttons from parent</p>
-      <button mat-button (click)="clickButton()">Click</button>
+    <div *ngFor="let participant of participants" participants>
+      <li>{{participant.name}}</li>
+      <li *ngIf="participant.surname">{{participant.surname}}</li>
     </div>
 
   </ov-toolbar>
