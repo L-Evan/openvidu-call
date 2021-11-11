@@ -33,6 +33,15 @@
             "scripts": []
           },
           "configurations": {
+            "development": {
+              "optimization": false,
+              "outputHashing": "all",
+              "sourceMap": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": false
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -66,9 +75,13 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
+
             "browserTarget": "openvidu-components:build"
           },
           "configurations": {
+            "development": {
+              "browserTarget": "openvidu-components:build:development"
+            },
             "production": {
               "browserTarget": "openvidu-components:build:production"
             }
