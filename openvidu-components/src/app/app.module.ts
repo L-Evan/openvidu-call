@@ -4,9 +4,11 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { environment } from 'src/environments/environment';
+
 // openvidu-components-library
-import {OpenviduComponentsLibraryModule} from 'projects/openvidu-components-library/src/lib/openvidu-components-library.module';
-import { ToolbarComponent } from 'projects/openvidu-components-library/src/lib/toolbar/toolbar.component';
+
+import { OpenviduComponentsLibraryModule, UserSettingsComponent } from 'openvidu-components-library';
 
 @NgModule({
   declarations: [
@@ -15,9 +17,12 @@ import { ToolbarComponent } from 'projects/openvidu-components-library/src/lib/t
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    OpenviduComponentsLibraryModule.forRoot(environment),
     OpenviduComponentsLibraryModule
   ],
-  providers: [ToolbarComponent],
+  providers: [
+    UserSettingsComponent
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -19,13 +19,9 @@
 
 <div class="content" role="main">
 
-  <ov-toolbar [color]="toolbarColor">
+  <div id="roomConfig">
+    <ov-user-settings></ov-user-settings>
 
-    <div *ngFor="let participant of participants" participants>
-      <li>{{participant.name}}</li>
-      <li *ngIf="participant.surname">{{participant.surname}}</li>
-    </div>
-
-  </ov-toolbar>
+  </div>
 
 </div>

@@ -7,15 +7,7 @@
 {
   "files": [],
   "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "openvidu-components": [
-        "dist/openvidu-components/openvidu-components",
-        "dist/openvidu-components"
-      ]
-    },
-    "skipDefaultLibCheck": false,
-    "skipLibCheck": false
+    "baseUrl": "./"
   },
   "references": [
     {
