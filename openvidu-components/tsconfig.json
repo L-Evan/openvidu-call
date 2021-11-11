@@ -13,7 +13,9 @@
         "dist/openvidu-components/openvidu-components",
         "dist/openvidu-components"
       ]
-    }
+    },
+    "skipDefaultLibCheck": false,
+    "skipLibCheck": false
   },
   "references": [
     {

@@ -1,4 +1,4 @@
-export class UserModel {
+export class UserModelPrueba {
 	name: string = '';
 
 	constructor() {

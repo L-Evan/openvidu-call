@@ -2,8 +2,11 @@
   "name": "openvidu-components-library",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^13.0.0",
-    "@angular/core": "^13.0.0"
+    "@angular/common": "13.0.0",
+    "@angular/core": "13.0.0",
+    "openvidu-browser": "2.20.0",
+    "linkify": "3.0.3",
+    "linkify-string": "3.3.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
