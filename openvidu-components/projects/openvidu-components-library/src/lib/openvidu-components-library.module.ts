@@ -25,6 +25,7 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { VideoComponent } from './components/video/video.component';
 
 import {
@@ -66,7 +67,8 @@ import { LibraryConfigService } from './services/library-config/library-config.s
     HasFooterPipe,
     HasToolbarPipe,
     UserSettingsComponent,
-    VideoComponent
+    VideoComponent,
+    ToolbarComponent
   ],
   imports: [
     CommonModule,
@@ -106,6 +108,7 @@ import { LibraryConfigService } from './services/library-config/library-config.s
   ],
   exports: [
     UserSettingsComponent,
+    ToolbarComponent,
     CommonModule
   ],
 })

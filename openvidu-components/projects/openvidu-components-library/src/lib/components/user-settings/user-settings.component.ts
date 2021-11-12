@@ -36,8 +36,8 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 	@ViewChild('bodyCard') bodyCard: ElementRef;
 	@Input() externalConfig: ExternalConfigModel;
 	@Input() ovSettings: SettingsModel;
-	@Output() join = new EventEmitter<any>();
-	@Output() leaveSession = new EventEmitter<any>();
+	@Output() onJoinClicked = new EventEmitter<any>();
+	@Output() onCloseClicked = new EventEmitter<any>();
 
 	mySessionId: string;
 
@@ -236,13 +236,13 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 	joinSession() {
 		if (this.nicknameFormControl.valid) {
 			this.avatarService.setFinalAvatar(this.avatarSelected);
-			return this.join.emit();
+			return this.onJoinClicked.emit();
 		}
 		this.scrollToBottom();
 	}
 
 	close() {
-		this.leaveSession.emit();
+		this.onCloseClicked.emit();
 	}
 
 	onSelectAvatar(type: AvatarType) {
