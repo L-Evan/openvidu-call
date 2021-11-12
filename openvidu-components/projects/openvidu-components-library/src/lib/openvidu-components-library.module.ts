@@ -27,6 +27,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { VideoComponent } from './components/video/video.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 import {
 	HasChatPipe,
@@ -68,7 +69,8 @@ import { LibraryConfigService } from './services/library-config/library-config.s
     HasToolbarPipe,
     UserSettingsComponent,
     VideoComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    ChatComponent,
   ],
   imports: [
     CommonModule,
@@ -109,6 +111,7 @@ import { LibraryConfigService } from './services/library-config/library-config.s
   exports: [
     UserSettingsComponent,
     ToolbarComponent,
+    ChatComponent,
     CommonModule
   ],
 })

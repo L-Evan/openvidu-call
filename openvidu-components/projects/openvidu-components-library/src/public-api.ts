@@ -13,6 +13,7 @@ export * from './lib/services/local-user/local-user.service';
 // Components
 export * from './lib/components/user-settings/user-settings.component';
 export * from './lib/components/toolbar/toolbar.component';
+export * from './lib/components/chat/chat.component';
 
 // Models
 export * from './lib/models/external-config.model';
