@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { MatSidenav } from '@angular/material/sidenav';
 import { Observable } from 'rxjs/internal/Observable';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
@@ -13,27 +12,19 @@ import { LocalUserService } from '../local-user/local-user.service';
 import { LoggerService } from '../logger/logger.service';
 import { RemoteUserService } from '../remote-user/remote-user.service';
 
-
 @Injectable({
 	providedIn: 'root'
 })
 export class ChatService {
 	messagesObs: Observable<ChatMessage[]>;
-	messagesUnreadObs: Observable<number>;
 	toggleChatObs: Observable<boolean>;
-
-	private chatComponent: MatSidenav;
 
 	private _messageList = <BehaviorSubject<ChatMessage[]>>new BehaviorSubject([]);
 	private _toggleChat = <BehaviorSubject<boolean>>new BehaviorSubject(false);
 
 	private messageList: ChatMessage[] = [];
-	private chatOpened: boolean;
-	private messagesUnread = 0;
+	private isChatOpened: boolean = false;
 	private log: ILogger;
-
-	private _messagesUnread = <BehaviorSubject<number>>new BehaviorSubject(0);
-
 	constructor(
 		private loggerSrv: LoggerService,
 		private openViduWebRTCService: WebrtcService,
@@ -44,11 +35,6 @@ export class ChatService {
 		this.log = this.loggerSrv.get('ChatService');
 		this.messagesObs = this._messageList.asObservable();
 		this.toggleChatObs = this._toggleChat.asObservable();
-		this.messagesUnreadObs = this._messagesUnread.asObservable();
-	}
-
-	setChatComponent(chatSidenav: MatSidenav) {
-		this.chatComponent = chatSidenav;
 	}
 
 	subscribeToChat() {
@@ -63,14 +49,13 @@ export class ChatService {
 				message: data.message,
 				userAvatar: isMyOwnConnection ? this.localUsersService.getAvatar() : this.remoteUsersService.getUserAvatar(connectionId)
 			});
-			if (!this.isChatOpened()) {
-				this.addMessageUnread();
-        const notificationOptions: INotificationOptions = {
-          message: `${data.nickname.toUpperCase()} sent a message`,
-          cssClassName: 'messageSnackbar',
-          buttonActionText: 'READ'
-        }
-				this.actionService.launchNotification(data.nickname.toUpperCase(), this.toggleChat.bind(this));
+			if (!this.isChatOpened) {
+				const notificationOptions: INotificationOptions = {
+					message: `${data.nickname.toUpperCase()} sent a message`,
+					cssClassName: 'messageSnackbar',
+					buttonActionText: 'READ'
+				};
+				this.actionService.launchNotification(notificationOptions, this.toggleChat.bind(this));
 			}
 			this._messageList.next(this.messageList);
 		});
@@ -93,26 +78,7 @@ export class ChatService {
 
 	toggleChat() {
 		this.log.d('Toggling chat');
-		this.chatComponent.toggle().then(() => {
-			this.chatOpened = this.chatComponent.opened;
-			this._toggleChat.next(this.chatOpened);
-			if (this.chatOpened) {
-				this.resetUnreadMessages();
-			}
-		});
-	}
-
-	resetUnreadMessages() {
-		this.messagesUnread = 0;
-		this._messagesUnread.next(this.messagesUnread);
-	}
-
-	private isChatOpened(): boolean {
-		return this.chatOpened;
-	}
-
-	private addMessageUnread() {
-		this.messagesUnread++;
-		this._messagesUnread.next(this.messagesUnread);
+		this.isChatOpened = !this.isChatOpened;
+		this._toggleChat.next(this.isChatOpened);
 	}
 }

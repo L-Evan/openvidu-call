@@ -11,13 +11,9 @@ import { ChatService } from '../../services/chat/chat.service';
 export class ChatComponent implements OnInit {
 	@ViewChild('chatScroll') chatScroll: ElementRef;
 	@ViewChild('chatInput') chatInput: ElementRef;
-
-	@Input() lightTheme: boolean;
-
 	message: string;
-
 	messageList: ChatMessage[] = [];
-	chatOpened: boolean;
+	isChatOpened: boolean;
 
 	private chatMessageSubscription: Subscription;
 	private chatToggleSubscription: Subscription;
@@ -26,8 +22,7 @@ export class ChatComponent implements OnInit {
 
 	@HostListener('document:keydown.escape', ['$event'])
 	onKeydownHandler(event: KeyboardEvent) {
-		console.log(event);
-		if (this.chatOpened) {
+		if (this.isChatOpened) {
 			this.close();
 		}
 	}
@@ -73,14 +68,16 @@ export class ChatComponent implements OnInit {
 	private subscribeToMessages() {
 		this.chatMessageSubscription = this.chatService.messagesObs.subscribe((messages: ChatMessage[]) => {
 			this.messageList = messages;
-			this.scrollToBottom();
+			if (this.isChatOpened) {
+				this.scrollToBottom();
+			}
 		});
 	}
 
 	private subscribeToToggleChat() {
 		this.chatToggleSubscription = this.chatService.toggleChatObs.subscribe((opened) => {
-			this.chatOpened = opened;
-			if (this.chatOpened) {
+			this.isChatOpened = opened;
+			if (this.isChatOpened) {
 				this.scrollToBottom();
 				setTimeout(() => {
 					this.chatInput.nativeElement.focus();

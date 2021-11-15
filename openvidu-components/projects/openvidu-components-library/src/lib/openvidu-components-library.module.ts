@@ -28,49 +28,55 @@ import { UserSettingsComponent } from './components/user-settings/user-settings.
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { VideoComponent } from './components/video/video.component';
 import { ChatComponent } from './components/chat/chat.component';
+import { RoomComponent } from './components/room/room.component';
+import { LayoutComponent } from './components/layout/layout.component';
+import { ParticipantComponent } from './components/participant/participant.component';
+import { DialogTemplateComponent } from './components/material/dialog.component';
 
-import {
-	HasChatPipe,
-	HasAudioPipe,
-	HasVideoPipe,
-	IsAutoPublishPipe,
-	HasScreenSharingPipe,
-	HasFullscreenPipe,
-	HasLayoutSpeakingPipe,
-	HasExitPipe,
-	HasFooterPipe,
-	HasToolbarPipe
-} from './pipes/settings.pipe';
+// import {
+// 	HasChatPipe,
+// 	HasAudioPipe,
+// 	HasVideoPipe,
+// 	IsAutoPublishPipe,
+// 	HasScreenSharingPipe,
+// 	HasFullscreenPipe,
+// 	HasLayoutSpeakingPipe,
+// 	HasExitPipe,
+// 	HasFooterPipe,
+// 	HasToolbarPipe
+// } from './pipes/settings.pipe';
+import { LinkifyPipe } from './pipes/linkify.pipe';
 
 import { LibConfig } from './config/lib.config';
+import { CdkOverlayContainer } from './config/custom-cdk-overlay';
 import { AvatarService } from './services/avatar/avatar.service';
 import { DeviceService } from './services/device/device.service';
 import { LocalUserService } from './services/local-user/local-user.service';
 import { LoggerService } from './services/logger/logger.service';
 import { PlatformService } from './services/platform/platform.service';
-import { RestService } from './services/rest/rest.service';
 import { StorageService } from './services/storage/storage.service';
 import { TokenService } from './services/token/token.service';
 import { UtilsService } from './services/utils/utils.service';
 import { LibraryConfigService } from './services/library-config/library-config.service';
+import { WebrtcService } from './services/webrtc/webrtc.service';
+import { ActionService } from './services/action/action.service';
+import { ChatService } from './services/chat/chat.service';
+import { DocumentService } from './services/document/document.service';
+import { LayoutService } from './services/layout/layout.service';
+import { RemoteUserService } from './services/remote-user/remote-user.service';
 
 
 @NgModule({
   declarations: [
-    HasChatPipe,
-    HasAudioPipe,
-    HasVideoPipe,
-    IsAutoPublishPipe,
-    HasScreenSharingPipe,
-    HasFullscreenPipe,
-    HasLayoutSpeakingPipe,
-    HasExitPipe,
-    HasFooterPipe,
-    HasToolbarPipe,
     UserSettingsComponent,
     VideoComponent,
     ToolbarComponent,
     ChatComponent,
+    RoomComponent,
+    LayoutComponent,
+    ParticipantComponent,
+    DialogTemplateComponent,
+    LinkifyPipe
   ],
   imports: [
     CommonModule,
@@ -98,22 +104,35 @@ import { LibraryConfigService } from './services/library-config/library-config.s
 		MatMenuModule
   ],
   providers: [
+    ActionService,
     AvatarService,
+    CdkOverlayContainer,
+		{ provide: OverlayContainer, useClass: CdkOverlayContainer },
+    ChatService,
     DeviceService,
+    DocumentService,
+    LayoutService,
     LocalUserService,
     LoggerService,
     PlatformService,
-    RestService,
+    RemoteUserService,
     StorageService,
     TokenService,
-    UtilsService
+    UtilsService,
+    WebrtcService
+
   ],
   exports: [
     UserSettingsComponent,
     ToolbarComponent,
     ChatComponent,
+    RoomComponent,
+    LayoutComponent,
     CommonModule
   ],
+  entryComponents: [
+    DialogTemplateComponent
+  ]
 })
 
 

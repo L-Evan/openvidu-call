@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DialogTemplateComponent } from '../../components/material/dialog.component';
 
 import { INotificationOptions } from '../../models/notification-options.model';
 
@@ -7,38 +9,9 @@ import { INotificationOptions } from '../../models/notification-options.model';
 	providedIn: 'root'
 })
 export class ActionService {
-	constructor(private snackBar: MatSnackBar) {}
 
-	toggleFullscreen(elementId: string) {
-		const document: any = window.document;
-		const fs = document.getElementById(elementId);
-		if (
-			!document.fullscreenElement &&
-			!document.mozFullScreenElement &&
-			!document.webkitFullscreenElement &&
-			!document.msFullscreenElement
-		) {
-			if (fs.requestFullscreen) {
-				fs.requestFullscreen();
-			} else if (fs.msRequestFullscreen) {
-				fs.msRequestFullscreen();
-			} else if (fs.mozRequestFullScreen) {
-				fs.mozRequestFullScreen();
-			} else if (fs.webkitRequestFullscreen) {
-				fs.webkitRequestFullscreen();
-			}
-		} else {
-			if (document.exitFullscreen) {
-				document.exitFullscreen();
-			} else if (document.msExitFullscreen) {
-				document.msExitFullscreen();
-			} else if (document.mozCancelFullScreen) {
-				document.mozCancelFullScreen();
-			} else if (document.webkitExitFullscreen) {
-				document.webkitExitFullscreen();
-			}
-		}
-	}
+	private dialogRef: MatDialogRef<DialogTemplateComponent>;
+	constructor(private snackBar: MatSnackBar, public dialog: MatDialog) {}
 
 	launchNotification(options: INotificationOptions, callback): void {
 		if (!options.config) {
@@ -55,5 +28,29 @@ export class ActionService {
 				callback();
 			});
 		}
+	}
+
+	openDialog(titleMessage: string, descriptionMessage: string, allowClose = true) {
+		try {
+			this.closeDialog();
+
+		} catch (error) {
+
+		} finally {
+			const config: MatDialogConfig = {
+				minWidth: '250px',
+				data: { title: titleMessage, description: descriptionMessage, showActionButtons: allowClose },
+				disableClose: !allowClose
+			};
+			this.dialogRef = this.dialog.open(DialogTemplateComponent, config);
+			this.dialogRef.afterOpened().subscribe(() => console.warn("dialog opened"));
+			this.dialogRef.afterClosed().subscribe((result) => {
+				this.dialogRef = null;
+			});
+		}
+	}
+
+	closeDialog() {
+		this.dialogRef.close();
 	}
 }

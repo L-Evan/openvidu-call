@@ -3,8 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { LayoutClass } from '../../models/layout.model';
 
-import * as linkifyStr from 'linkify-string';
-import { NgxLinkifyOptions } from '../../models/linkify.model';
+
 
 @Injectable({
 	providedIn: 'root'
@@ -45,61 +44,62 @@ export class UtilsService {
 	// 	}
 	// }
 
-	handlerScreenShareError(error: any) {
-		if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
-			alert('Your browser does not support screen sharing');
-		} else if (error && error.name === 'SCREEN_EXTENSION_DISABLED') {
-			alert('You need to enable screen sharing extension');
-		} else if (error && error.name === 'SCREEN_CAPTURE_DENIED') {
-			// alert('You need to choose a window or application to share');
-		}
-	}
+	// handlerScreenShareError(error: any) {
+	// 	if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
+	// 		alert('Your browser does not support screen sharing');
+	// 	} else if (error && error.name === 'SCREEN_EXTENSION_DISABLED') {
+	// 		alert('You need to enable screen sharing extension');
+	// 	} else if (error && error.name === 'SCREEN_CAPTURE_DENIED') {
+	// 		// alert('You need to choose a window or application to share');
+	// 	}
+	// }
 
+	//TODO: Move to user model
 	generateNickname(): string {
 		return 'OpenVidu_User' + Math.floor(Math.random() * 100);
 	}
 
-	showErrorMessage(header: string, message: string, disableClose: boolean = false) {
-		// this.dialogRef = this.dialog.open(DialogErrorComponent, {
-		// 	data: { header: header, message: message },
-		// 	disableClose
-		// });
-    console.error(message);
-    console.error('Error showing message');
-	}
+	// showErrorMessage(header: string, message: string, disableClose: boolean = false) {
+	// 	// this.dialogRef = this.dialog.open(DialogErrorComponent, {
+	// 	// 	data: { header: header, message: message },
+	// 	// 	disableClose
+	// 	// });
+    // console.error(message);
+    // console.error('Error showing message');
+	// }
 
-	closeDialog() {
-		// this.dialogRef?.close();
-	}
+	// closeDialog() {
+	// 	// this.dialogRef?.close();
+	// }
 
-	getHTMLElementByClassName(element: HTMLElement, className: string): HTMLElement {
-		while (!!element && element !== document.body) {
-			if (element.className.includes(className)) {
-				return element;
-			}
-			element = element.parentElement;
-		}
-		return null;
-	}
+	// getHTMLElementByClassName(element: HTMLElement, className: string): HTMLElement {
+	// 	while (!!element && element !== document.body) {
+	// 		if (element.className.includes(className)) {
+	// 			return element;
+	// 		}
+	// 		element = element.parentElement;
+	// 	}
+	// 	return null;
+	// }
 
-	toggleBigElementClass(element: HTMLElement | Element) {
-		if (element?.className.includes(LayoutClass.BIG_ELEMENT)) {
-			this.removeBigElementClass(element);
-		} else {
-			element.classList.add(LayoutClass.BIG_ELEMENT);
-		}
-	}
+	// toggleBigElementClass(element: HTMLElement | Element) {
+	// 	if (element?.className.includes(LayoutClass.BIG_ELEMENT)) {
+	// 		this.removeBigElementClass(element);
+	// 	} else {
+	// 		element.classList.add(LayoutClass.BIG_ELEMENT);
+	// 	}
+	// }
 
-	removeBigElementClass(element: HTMLElement | Element) {
-		element?.classList.remove(LayoutClass.BIG_ELEMENT);
-	}
+	// removeBigElementClass(element: HTMLElement | Element) {
+	// 	element?.classList.remove(LayoutClass.BIG_ELEMENT);
+	// }
 
-	removeAllBigElementClass() {
-		const elements: HTMLCollectionOf<Element> = document.getElementsByClassName(LayoutClass.BIG_ELEMENT);
-		while (elements.length > 0) {
-			this.removeBigElementClass(elements[0]);
-		}
-	}
+	// removeAllBigElementClass() {
+	// 	const elements: HTMLCollectionOf<Element> = document.getElementsByClassName(LayoutClass.BIG_ELEMENT);
+	// 	while (elements.length > 0) {
+	// 		this.removeBigElementClass(elements[0]);
+	// 	}
+	// }
 
 	isSmallElement(element: HTMLElement | Element): boolean {
 		return element?.className.includes(LayoutClass.SMALL_ELEMENT);
@@ -115,7 +115,5 @@ export class UtilsService {
 		return nickname;
 	}
 
-	linkify(text: string, options?: NgxLinkifyOptions): string {
-		return linkifyStr(text, options);
-	}
+
 }

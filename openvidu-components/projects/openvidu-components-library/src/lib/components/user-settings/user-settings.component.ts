@@ -10,8 +10,6 @@ import { ILogger } from '../../models/logger.model';
 import { CameraType, IDevice } from '../../models/device.model';
 import { AvatarType } from '../../models/chat.model';
 import { UserModel } from '../../models/user.model';
-import { ExternalConfigModel } from '../../models/external-config.model';
-import { SettingsModel } from '../../models/settings.model';
 import { Storage } from '../../models/storage.model';
 import { ScreenType } from '../../models/video-type.model';
 
@@ -25,6 +23,7 @@ import { LocalUserService } from '../../services/local-user/local-user.service';
 import { UtilsService } from '../../services/utils/utils.service';
 import { WebrtcService } from '../../services/webrtc/webrtc.service';
 import { TokenService } from '../../services/token/token.service';
+import { ActionService } from '../../services/action/action.service';
 
 
 @Component({
@@ -34,8 +33,8 @@ import { TokenService } from '../../services/token/token.service';
 })
 export class UserSettingsComponent implements OnInit, OnDestroy {
 	@ViewChild('bodyCard') bodyCard: ElementRef;
-	@Input() externalConfig: ExternalConfigModel;
-	@Input() ovSettings: SettingsModel;
+
+	@Input() sessionId: string;
 	@Output() onJoinClicked = new EventEmitter<any>();
 	@Output() onCloseClicked = new EventEmitter<any>();
 
@@ -66,6 +65,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private route: ActivatedRoute,
+		private actionService: ActionService,
 		private utilsSrv: UtilsService,
 		private deviceSrv: DeviceService,
 		private loggerSrv: LoggerService,
@@ -89,7 +89,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 		this.initNicknameAndSubscribeToChanges();
 		this.openviduAvatar = this.avatarService.getOpenViduAvatar();
 		this.columns = window.innerWidth > 900 ? 2 : 1;
-		this.setSessionName();
 		await this.deviceSrv.initDevices();
 		this.setDevicesInfo();
 		if (this.hasAudioDevices || this.hasVideoDevices) {
@@ -187,8 +186,10 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 				}
 			});
 
-			screenPublisher.on('accessDenied', (event) => {
-				this.log.w('ScreenShare: Access Denied');
+			screenPublisher.on('accessDenied', (error: any) => {
+				if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
+					this.actionService.openDialog('Error sharing screen', 'Your browser does not support screen sharing');
+				}
 			});
 			return;
 		}
@@ -208,11 +209,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	initNicknameAndSubscribeToChanges() {
-		if (this.externalConfig) {
-			this.nicknameFormControl.setValue(this.externalConfig.getNickname());
-			this.localUsersService.updateUsersNickname(this.externalConfig.getNickname());
-			return;
-		}
+
 		const nickname = this.storageSrv.get(Storage.USER_NICKNAME) || this.utilsSrv.generateNickname();
 		this.nicknameFormControl.setValue(nickname);
 		this.localUsersService.updateUsersNickname(nickname);
@@ -258,32 +255,20 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 		this.micSelected = this.deviceSrv.getMicSelected();
 	}
 
-	private setSessionName() {
-		this.route.params.subscribe((params: Params) => {
-			this.mySessionId = this.externalConfig ? this.externalConfig.getSessionName() : params.roomName;
-			this.tokenService.setSessionId(this.mySessionId);
-		});
-	}
-
 	private scrollToBottom(): void {
 		try {
 			this.bodyCard.nativeElement.scrollTop = this.bodyCard.nativeElement.scrollHeight;
 		} catch (err) {}
 	}
 
+	// !DUPLICATED ON toolbar.component.ts
 	private initScreenPublisher(): Publisher {
 		const videoSource = ScreenType.SCREEN;
 		const audioSource = this.hasAudioDevices ? undefined : null;
 		const willThereBeWebcam = this.localUsersService.isWebCamEnabled() && this.localUsersService.hasWebcamVideoActive();
 		const hasAudio = willThereBeWebcam ? false : this.hasAudioDevices && this.isAudioActive;
 		const properties = this.openViduWebRTCService.createPublisherProperties(videoSource, audioSource, true, hasAudio, false);
-
-		try {
-			return this.openViduWebRTCService.initPublisher(undefined, properties);
-		} catch (error) {
-			this.log.e(error);
-			this.utilsSrv.handlerScreenShareError(error);
-		}
+		return this.openViduWebRTCService.initPublisher(undefined, properties);
 	}
 
 	private publishAudio(audio: boolean) {
@@ -324,20 +309,12 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 			this.handlePublisherError(publisher);
 		} else {
 			this.localUsersService.setWebcamPublisher(null);
-			if (this.ovSettings.isAutoPublish()) {
-				this.joinSession();
-			}
 		}
 	}
 
 
 	private handlePublisherSuccess(publisher: Publisher) {
 		publisher.once('accessAllowed', async () => {
-			// TODO: Think about how handle autopublish
-			// if (this.ovSettings.isAutoPublish()) {
-			// 	this.joinSession();
-			// 	return;
-			// }
 			if (this.deviceSrv.areEmptyLabels()) {
 				await this.deviceSrv.initDevices();
 				if (this.hasAudioDevices) {
@@ -374,7 +351,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 			} else if (e.name === OpenViduErrorName.NO_INPUT_SOURCE_SET) {
 				message = 'No video or audio devices have been found. Please, connect at least one.';
 			}
-			this.utilsSrv.showErrorMessage(e.name.replace(/_/g, ' '), message, true);
+			this.actionService.openDialog(e.name.replace(/_/g, ' '), message, true);
 			this.log.e(e.message);
 		});
 	}

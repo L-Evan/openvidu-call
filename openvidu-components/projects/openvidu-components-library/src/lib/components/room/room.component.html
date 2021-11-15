@@ -1,0 +1,11 @@
+<div id="videoRoomNavBar">
+	<div>
+		<div *ngIf="isConnectionLost" class="reconnecting-container"></div>
+
+		<ng-content select="[toolbar]"></ng-content>
+
+		<ng-content select="[layout]"></ng-content>
+
+		<!-- <app-footer *ngIf="ovSettings | hasFooter" [lightTheme]="lightTheme" [participants]="participantsNameList"></app-footer> -->
+	</div>
+</div>

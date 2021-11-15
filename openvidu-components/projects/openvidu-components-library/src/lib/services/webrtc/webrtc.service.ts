@@ -200,12 +200,14 @@ export class WebrtcService {
 		if (!!publisher) {
 			publisher.publishAudio(active);
 		}
+		this.localUsersSrv.updateUsersStatus();
 	}
 	publishScreenAudio(active: boolean): void {
 		const publisher = this.localUsersSrv.getScreenPublisher();
 		if (!!publisher) {
 			publisher.publishAudio(active);
 		}
+		this.localUsersSrv.updateUsersStatus();
 	}
 	replaceTrack(videoSource: string, audioSource: string, mirror: boolean = true): Promise<void> {
 		return new Promise((resolve, reject) => {

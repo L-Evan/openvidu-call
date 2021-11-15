@@ -8,7 +8,7 @@
 				<div class="headerLogo">
 					<img id="header_img" alt="OpenVidu Logo" src="assets/images/openvidu_logo_grey.png" />
 				</div>
-				<h3 class="headerTitle">{{ mySessionId }}</h3>
+				<h3 class="headerTitle" *ngIf="sessionId">{{ sessionId }}</h3>
 
 				<button mat-mini-fab (click)="close()" class="closeButton" id="closeButton">
 					<mat-icon color="warn" matTooltip="Close">highlight_off</mat-icon>
@@ -104,7 +104,7 @@
 						</div>
 
 						<!-- Devices section / Microphone-->
-						<div fxLayout="row" fxFill id="devicesSection" *ngIf="hasAudioDevices && (ovSettings | hasAudio)">
+						<div fxLayout="row" fxFill id="devicesSection" *ngIf="hasAudioDevices">
 							<div fxLayout fxFlex>
 								<div class="one" fxFlex="20" fxLayoutAlign="center center">
 									<button mat-mini-fab (click)="toggleMic()" class="deviceButton" id="configCardMicrophoneButton">
@@ -130,7 +130,7 @@
 							</div>
 						</div>
 						<!-- Devices section / Camera-->
-						<div fxLayout="row" fxFill id="devicesSection" *ngIf="hasVideoDevices && (ovSettings | hasVideo)">
+						<div fxLayout="row" fxFill id="devicesSection" *ngIf="hasVideoDevices">
 							<div fxLayout fxFlex>
 								<div class="one" fxFlex="20" fxLayoutAlign="center center">
 									<button mat-mini-fab (click)="toggleCam()" class="deviceButton" id="configCardCameraButton">
@@ -157,7 +157,7 @@
 						</div>
 
 						<!-- Devices section / ScreenShare-->
-						<div fxLayout="row" fxFill id="devicesSection" *ngIf="ovSettings | hasScreenSharing">
+						<div fxLayout="row" fxFill id="devicesSection">
 							<div fxLayout fxFlex>
 								<div class="one" fxFlex="20" fxLayoutAlign="center center">
 									<button mat-mini-fab (click)="toggleScreenShare()" class="deviceButton" id="configCardScreenButton">

@@ -12,9 +12,12 @@ export class LocalUserService {
 	OVUsers: Observable<UserModel[]>;
 	screenShareState: Observable<boolean>;
 	webcamVideoActive: Observable<boolean>;
+	webcamAudioActive: Observable<boolean>;
 	private _OVUsers = <BehaviorSubject<UserModel[]>>new BehaviorSubject([]);
 	private _screenShareState = <BehaviorSubject<boolean>>new BehaviorSubject(false);
 	private _webcamVideoActive = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+	private _webcamAudioActive = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+
 	private webcamUser: UserModel = null;
 	private screenUser: UserModel = null;
 	private log: ILogger;
@@ -27,6 +30,7 @@ export class LocalUserService {
 		this.OVUsers = this._OVUsers.asObservable();
 		this.screenShareState = this._screenShareState.asObservable();
 		this.webcamVideoActive = this._webcamVideoActive.asObservable();
+		this.webcamAudioActive = this._webcamAudioActive.asObservable();
 		this.webcamUser = new UserModel();
 		// Used when the streamManager is null (users without devices)
 		this.webcamUser.setLocal(true);
@@ -82,6 +86,12 @@ export class LocalUserService {
 
 	updateUsersStatus() {
 		this._webcamVideoActive.next(this.webcamUser.isVideoActive());
+		if (this.isWebCamEnabled()) {
+			this._webcamAudioActive.next(this.webcamUser.isAudioActive());
+		} else {
+			this._webcamAudioActive.next(this.hasScreenAudioActive());
+
+		}
 	}
 
 	clear() {
