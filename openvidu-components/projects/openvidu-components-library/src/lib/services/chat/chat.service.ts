@@ -11,6 +11,7 @@ import { WebrtcService } from '../webrtc/webrtc.service';
 import { LocalUserService } from '../local-user/local-user.service';
 import { LoggerService } from '../logger/logger.service';
 import { RemoteUserService } from '../remote-user/remote-user.service';
+import { Signal } from '../../models/signal.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -39,7 +40,7 @@ export class ChatService {
 
 	subscribeToChat() {
 		const session = this.openViduWebRTCService.getWebcamSession();
-		session.on('signal:chat', (event: any) => {
+		session.on(`signal:${Signal.CHAT}`, (event: any) => {
 			const connectionId = event.from.connectionId;
 			const data = JSON.parse(event.data);
 			const isMyOwnConnection = this.openViduWebRTCService.isMyOwnConnection(connectionId);
@@ -68,11 +69,8 @@ export class ChatService {
 				message: message,
 				nickname: this.localUsersService.getWebcamUserName()
 			};
-			const sessionAvailable = this.openViduWebRTCService.getSessionOfUserConnected();
-			sessionAvailable.signal({
-				data: JSON.stringify(data),
-				type: 'chat'
-			});
+
+			this.openViduWebRTCService.sendSignal(Signal.CHAT, undefined, data);
 		}
 	}
 

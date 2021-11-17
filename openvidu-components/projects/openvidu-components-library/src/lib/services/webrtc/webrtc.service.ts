@@ -8,6 +8,7 @@ import { ILogger } from '../../models/logger.model';
 import { ScreenType } from '../../models/video-type.model';
 import { Signal } from '../../models/signal.model';
 import { LibraryConfigService } from '../library-config/library-config.service';
+import { PlatformService } from '../platform/platform.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -26,22 +27,30 @@ export class WebrtcService {
 	private webcamMediaStream: MediaStream = null;
 	private log: ILogger;
 
-	constructor(private libraryConfigSrv: LibraryConfigService, private loggerSrv: LoggerService, private localUsersSrv: LocalUserService) {
-		this.log = this.loggerSrv.get('OpenViduWebRTCService');
+	constructor(
+		private libraryConfigSrv: LibraryConfigService,
+		private platformService: PlatformService,
+		private loggerSrv: LoggerService,
+		private localUsersSrv: LocalUserService
+	) {
+		this.log = this.loggerSrv.get('WebRTCService');
 	}
 
 	initialize() {
 		this.OV = new OpenVidu();
-		this.OVScreen = new OpenVidu();
 		if (this.libraryConfigSrv.isProduction()) {
 			this.OV.enableProdMode();
-			this.OVScreen.enableProdMode();
 		}
-	}
+		this.webcamSession = this.OV.initSession();
 
-	initSessions() {
-		this.initializeWebcamSession();
-		this.initializeScreenSession();
+		// Avoid creating a screen session for mobile
+		if(!this.platformService.isMobile()) {
+			this.OVScreen = new OpenVidu();
+			if (this.libraryConfigSrv.isProduction()) {
+				this.OVScreen.enableProdMode();
+			}
+			this.screenSession = this.OVScreen.initSession();
+		}
 	}
 
 	getWebcamSession(): Session {
@@ -50,14 +59,6 @@ export class WebrtcService {
 
 	isWebcamSessionConnected(): boolean {
 		return !!this.webcamSession.capabilities;
-	}
-
-	initializeWebcamSession(): void {
-		this.webcamSession = this.OV.initSession();
-	}
-
-	initializeScreenSession(): void {
-		this.screenSession = this.OVScreen.initSession();
 	}
 
 	getScreenSession(): Session {
@@ -263,19 +264,8 @@ export class WebrtcService {
 			to: connection ? [connection] : undefined
 		};
 		this.webcamSession.signal(signalOptions);
-		// signalOptions.data = JSON.stringify({nickname: this.getScreenUserName()});
-		// this.getScreenSession()?.signal(signalOptions);
-	}
 
-	// TODO: replace function by sendSignal
-	sendNicknameSignal(connection?: Connection) {
-		if (this.needSendNicknameSignal()) {
-			const signalOptions: SignalOptions = {
-				data: JSON.stringify({ clientData: this.localUsersSrv.getWebcamUserName() }),
-				type: 'nicknameChanged',
-				to: connection ? [connection] : undefined
-			};
-			this.getWebcamSession()?.signal(signalOptions);
+		if(type === Signal.NICKNAME_CHANGED && !!this.getScreenSession().connection){
 			signalOptions.data = JSON.stringify({ clientData: this.localUsersSrv.getScreenUserName() });
 			this.getScreenSession()?.signal(signalOptions);
 		}

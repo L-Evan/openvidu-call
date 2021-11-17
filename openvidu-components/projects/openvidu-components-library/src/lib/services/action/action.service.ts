@@ -43,7 +43,6 @@ export class ActionService {
 				disableClose: !allowClose
 			};
 			this.dialogRef = this.dialog.open(DialogTemplateComponent, config);
-			this.dialogRef.afterOpened().subscribe(() => console.warn("dialog opened"));
 			this.dialogRef.afterClosed().subscribe((result) => {
 				this.dialogRef = null;
 			});

@@ -14,6 +14,7 @@ import { LayoutService } from '../../services/layout/layout.service';
 import { LocalUserService } from '../../services/local-user/local-user.service';
 import { RemoteUserService } from '../../services/remote-user/remote-user.service';
 import { StorageService } from '../../services/storage/storage.service';
+import { Signal } from '../../models/signal.model';
 
 @Component({
 	selector: 'ov-participant',
@@ -145,7 +146,7 @@ export class ParticipantComponent implements OnInit {
 			const nickname = this.nicknameFormControl.value;
 			this.localUserService.updateUsersNickname(nickname);
 			this.storageService.set(Storage.USER_NICKNAME, nickname);
-			this.openViduWebRTCService.sendNicknameSignal();
+			this.openViduWebRTCService.sendSignal(Signal.NICKNAME_CHANGED, undefined, {clientData: nickname});
 			this.toggleNicknameForm();
 		}
 	}

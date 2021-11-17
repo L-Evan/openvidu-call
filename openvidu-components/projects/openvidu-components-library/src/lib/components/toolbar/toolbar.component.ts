@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { LocalUserService } from '../../services/local-user/local-user.service';
 import { TokenService } from '../../services/token/token.service';
@@ -21,14 +21,13 @@ import { ChatMessage } from '../../models/chat.model';
 	styleUrls: ['./toolbar.component.css']
 })
 export class ToolbarComponent implements OnInit, OnDestroy {
-	@Input() compact: boolean;
 	@Output() onMicClicked = new EventEmitter<any>();
 	@Output() onCamClicked = new EventEmitter<any>();
 	@Output() onScreenShareClicked = new EventEmitter<any>();
 	@Output() onSpeakerLayoutClicked = new EventEmitter<any>();
 	@Output() onLeaveSessionClicked = new EventEmitter<any>();
+	@Output() onChatClicked = new EventEmitter<any>();
 
-	sessionId: string;
 	session: Session;
 
 	unreadMessages: number;
@@ -48,7 +47,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 	participantsNames: string[] = [];
 
 	private log: ILogger;
-	private chatServiceSubscription: Subscription;
+	private chatTogglingSubscription: Subscription;
+	private chatMessagesSubscription: Subscription;
 	private screenShareStateSubscription: Subscription;
 	private webcamVideoStateSubscription: Subscription;
 	private webcamAudioStateSubscription: Subscription;
@@ -67,8 +67,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy(): void {
-		if (this.chatServiceSubscription) {
-			this.chatServiceSubscription.unsubscribe();
+		if (this.chatTogglingSubscription) {
+			this.chatTogglingSubscription.unsubscribe();
+		}
+		if (this.chatMessagesSubscription) {
+			this.chatMessagesSubscription.unsubscribe();
 		}
 		if (this.screenShareStateSubscription) {
 			this.screenShareStateSubscription.unsubscribe();
@@ -97,33 +100,13 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 		this.hasVideoDevices = this.oVDevicesService.hasVideoDeviceAvailable();
 		this.hasAudioDevices = this.oVDevicesService.hasAudioDeviceAvailable();
 
-		this.sessionId = this.tokenService.getSessionId();
 		this.session = this.openViduWebRTCService.getWebcamSession();
 
-		this.chatServiceSubscription = this.chatService.toggleChatObs.subscribe((opened) => {
-			if (opened) {
-				this.unreadMessages = 0;
-			}
-			this.isChatOpened = opened;
-		});
+		this.subscribeToChatToggling();
+		this.subscriberToChatMessages();
+		this.subscribeToUserMediaProperties();
+		this.subscribeToReconnection();
 
-		this.chatServiceSubscription = this.chatService.messagesObs.subscribe((messages) => {
-			if (!this.isChatOpened) {
-				this.unreadMessages = messages.length - this.messageList.length;
-			}
-			this.messageList = messages;
-		});
-
-		this.screenShareStateSubscription = this.localUsersService.screenShareState.subscribe((enabled) => {
-			this.isScreenShareEnabled = enabled;
-		});
-
-		this.webcamVideoStateSubscription = this.localUsersService.webcamVideoActive.subscribe((enabled) => {
-			this.isWebcamVideoEnabled = enabled;
-		});
-		this.webcamAudioStateSubscription = this.localUsersService.webcamAudioActive.subscribe((enabled) => {
-			this.isWebcamAudioEnabled = enabled;
-		});
 	}
 
 	toggleMicrophone() {
@@ -194,7 +177,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 					await this.connectScreenSession();
 				}
 				await this.openViduWebRTCService.publishScreenPublisher();
-				this.openViduWebRTCService.sendNicknameSignal();
+				// this.openViduWebRTCService.sendNicknameSignal();
 				if (!this.localUsersService.hasWebcamVideoActive()) {
 					// Disabling webcam
 					this.localUsersService.disableWebcamUser();
@@ -250,6 +233,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
 	toggleChat() {
 		this.chatService.toggleChat();
+		this.onChatClicked.emit();
 	}
 
 	toggleFullscreen() {
@@ -261,7 +245,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 		try {
 			await this.openViduWebRTCService.connectScreenSession(this.tokenService.getScreenToken());
 		} catch (error) {
-			// this._error.emit({ error: error.error, messgae: error.message, code: error.code, status: error.status });
 			this.log.e('There was an error connecting to the session:', error.code, error.message);
 			this.actionService.openDialog('There was an error connecting to the session:', error?.error || error?.message);
 		}
@@ -274,6 +257,48 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 		const hasAudio = willThereBeWebcam ? false : this.hasAudioDevices && this.localUsersService.hasWebcamAudioActive();
 		const properties = this.openViduWebRTCService.createPublisherProperties(videoSource, audioSource, true, hasAudio, false);
 		return this.openViduWebRTCService.initPublisher(undefined, properties);
+	}
+
+	private subscribeToReconnection() {
+		this.session.on('reconnecting', () => {
+			if (this.isChatOpened) {
+				this.toggleChat();
+			}
+			this.isConnectionLost = true;
+		});
+		this.session.on('reconnected', () => {
+			this.isConnectionLost = false;
+		});
+	}
+	private subscribeToChatToggling() {
+		this.chatTogglingSubscription = this.chatService.toggleChatObs.subscribe((opened) => {
+			if (opened) {
+				this.unreadMessages = 0;
+			}
+			this.isChatOpened = opened;
+		});
+	}
+
+	private subscriberToChatMessages() {
+		this.chatMessagesSubscription = this.chatService.messagesObs.subscribe((messages) => {
+			if (!this.isChatOpened) {
+				this.unreadMessages = messages.length - this.messageList.length;
+			}
+			this.messageList = messages;
+		});
+	}
+	private subscribeToUserMediaProperties() {
+		console.warn("sol")
+		this.screenShareStateSubscription = this.localUsersService.screenShareState.subscribe((enabled) => {
+			this.isScreenShareEnabled = enabled;
+		});
+
+		this.webcamVideoStateSubscription = this.localUsersService.webcamVideoActive.subscribe((enabled) => {
+			this.isWebcamVideoEnabled = enabled;
+		});
+		this.webcamAudioStateSubscription = this.localUsersService.webcamAudioActive.subscribe((enabled) => {
+			this.isWebcamAudioEnabled = enabled;
+		});
 	}
 
 	// private subscribeToSpeechDetection() {

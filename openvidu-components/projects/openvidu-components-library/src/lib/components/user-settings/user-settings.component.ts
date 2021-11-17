@@ -1,6 +1,5 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { OpenViduErrorName } from 'openvidu-browser/lib/OpenViduInternal/Enums/OpenViduError';
@@ -22,7 +21,6 @@ import { AvatarService } from '../../services/avatar/avatar.service';
 import { LocalUserService } from '../../services/local-user/local-user.service';
 import { UtilsService } from '../../services/utils/utils.service';
 import { WebrtcService } from '../../services/webrtc/webrtc.service';
-import { TokenService } from '../../services/token/token.service';
 import { ActionService } from '../../services/action/action.service';
 
 
@@ -37,8 +35,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 	@Input() sessionId: string;
 	@Output() onJoinClicked = new EventEmitter<any>();
 	@Output() onCloseClicked = new EventEmitter<any>();
-
-	mySessionId: string;
 
 	cameras: IDevice[];
 	microphones: IDevice[];
@@ -59,18 +55,15 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 	hasVideoDevices: boolean;
 	hasAudioDevices: boolean;
 	private log: ILogger;
-
 	private oVUsersSubscription: Subscription;
 	private screenShareStateSubscription: Subscription;
 
 	constructor(
-		private route: ActivatedRoute,
 		private actionService: ActionService,
 		private utilsSrv: UtilsService,
 		private deviceSrv: DeviceService,
 		private loggerSrv: LoggerService,
 		private openViduWebRTCService: WebrtcService,
-		private tokenService: TokenService,
 		private localUsersService: LocalUserService,
 		private storageSrv: StorageService,
 		private avatarService: AvatarService
@@ -85,6 +78,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	async ngOnInit() {
+		this.openViduWebRTCService.initialize();
 		this.subscribeToLocalUsersEvents();
 		this.initNicknameAndSubscribeToChanges();
 		this.openviduAvatar = this.avatarService.getOpenViduAvatar();

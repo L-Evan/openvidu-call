@@ -26,6 +26,7 @@ import { TokenService } from '../../services/token/token.service';
 import { PlatformService } from '../../services/platform/platform.service';
 import { LayoutService } from '../../services/layout/layout.service';
 import { ActionService } from '../../services/action/action.service';
+import { Signal } from '../../models/signal.model';
 
 
 @Component({
@@ -48,7 +49,6 @@ export class RoomComponent implements OnInit {
 	localUsers: UserModel[] = [];
 	remoteUsers: UserModel[] = [];
 	participantsNameList: UserName[] = [];
-	isConnectionLost: boolean;
 	private log: ILogger;
 	private oVUsersSubscription: Subscription;
 	private remoteUsersSubscription: Subscription;
@@ -77,17 +77,34 @@ export class RoomComponent implements OnInit {
 
 	async ngOnInit() {
 		// this.localUsersService.initialize();
-		// this.openViduWebRTCService.initialize();
 
+		this.session = this.openViduWebRTCService.getWebcamSession();
+		this.sessionScreen = this.openViduWebRTCService.getScreenSession();
+		this.subscribeToConnectionCreatedAndDestroyed();
+		this.subscribeToStreamCreated();
+		this.subscribeToStreamDestroyed();
+		this.subscribeToStreamPropertyChange();
+		this.subscribeToNicknameChanged();
+		this.chatService.subscribeToChat();
+		this.subscribeToReconnection();
 		this.subscribeToLocalUsers();
 		this.subscribeToRemoteUsers();
 
 		this.tokenService.setWebcamToken(this.tokens.webcam);
 		this.tokenService.setScreenToken(this.tokens.screen);
 
-		setTimeout(() => {
-			this.joinToSession();
+		setTimeout(async () => {
+
+			await this.connectToSession();
+			// Workaround, firefox does not have audio when publisher join with muted camera
+			if (this.platformService.isFirefox() && !this.localUsersService.hasWebcamVideoActive()) {
+				this.openViduWebRTCService.publishWebcamVideo(true);
+				this.openViduWebRTCService.publishWebcamVideo(false);
+			}
 		}, 50);
+
+		this._session.emit(this.session);
+
 
 	}
 
@@ -116,26 +133,6 @@ export class RoomComponent implements OnInit {
 		}
 	}
 
-	async joinToSession() {
-		this.openViduWebRTCService.initSessions();
-		this.session = this.openViduWebRTCService.getWebcamSession();
-		this._session.emit(this.session);
-		this.sessionScreen = this.openViduWebRTCService.getScreenSession();
-		this.subscribeToConnectionCreatedAndDestroyed();
-		this.subscribeToStreamCreated();
-		this.subscribeToStreamDestroyed();
-		this.subscribeToStreamPropertyChange();
-		this.subscribeToNicknameChanged();
-		this.chatService.subscribeToChat();
-		// this.subscribeToChatComponent();
-		this.subscribeToReconnection();
-		await this.connectToSession();
-		// Workaround, firefox does not have audio when publisher join with muted camera
-		if (this.platformService.isFirefox() && !this.localUsersService.hasWebcamVideoActive()) {
-			this.openViduWebRTCService.publishWebcamVideo(true);
-			this.openViduWebRTCService.publishWebcamVideo(false);
-		}
-	}
 
 	leaveSession() {
 		this.log.d('Leaving session...');
@@ -196,7 +193,12 @@ export class RoomComponent implements OnInit {
 			// Adding participant when connection is created
 			if (!nickname?.includes('_' + VideoType.SCREEN)) {
 				this.remoteUsersService.add(event, null);
-				this.openViduWebRTCService.sendNicknameSignal(event.connection);
+
+				//Sending nicnkanme signal to new participants
+				if(this.openViduWebRTCService.needSendNicknameSignal()){
+					const data = {clientData: this.localUsersService.getWebcamUserName()};
+					this.openViduWebRTCService.sendSignal(Signal.NICKNAME_CHANGED,event.connection, data);
+				}
 			}
 		});
 
@@ -266,12 +268,10 @@ export class RoomComponent implements OnInit {
 	private subscribeToReconnection() {
 		this.session.on('reconnecting', () => {
 			this.log.w('Connection lost: Reconnecting');
-			this.isConnectionLost = true;
-			this.actionService.openDialog('Connection Problem', 'Oops! Trying to reconnect to the session ...', true);
+			this.actionService.openDialog('Connection Problem', 'Oops! Trying to reconnect to the session ...', false);
 		});
 		this.session.on('reconnected', () => {
 			this.log.w('Connection lost: Reconnected');
-			this.isConnectionLost = false;
 			this.actionService.closeDialog();
 		});
 		this.session.on('sessionDisconnected', (event: SessionDisconnectedEvent) => {

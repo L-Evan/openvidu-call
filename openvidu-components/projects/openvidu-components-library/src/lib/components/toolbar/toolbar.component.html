@@ -11,8 +11,8 @@
 			<a>
 				<img id="header_img" alt="OpenVidu Logo" [src]="logoUrl" />
 			</a>
-			<div *ngIf="!compact && sessionId" [ngClass]="{'titleContent': true, 'titleContentLight': lightTheme, 'titleContentDark': !lightTheme}">
-				<span id="session-title">{{ sessionId }}</span>
+			<div *ngIf="session && session.sessionId" class="titleContentDark" [ngClass]="{'titleContent': true }">
+				<span id="session-title">{{ session.sessionId }}</span>
 			</div>
 		</div>
 	</div>
