@@ -34,6 +34,7 @@ import { Signal } from '../../models/signal.model';
 	templateUrl: './room.component.html',
 	styleUrls: ['./room.component.css']
 })
+
 export class RoomComponent implements OnInit {
 	@Input() tokens: {webcam:string, screen: string};
 	@Output() _session = new EventEmitter<any>();
@@ -77,7 +78,6 @@ export class RoomComponent implements OnInit {
 
 	async ngOnInit() {
 		// this.localUsersService.initialize();
-
 		this.session = this.openViduWebRTCService.getWebcamSession();
 		this.sessionScreen = this.openViduWebRTCService.getScreenSession();
 		this.subscribeToConnectionCreatedAndDestroyed();
@@ -93,19 +93,14 @@ export class RoomComponent implements OnInit {
 		this.tokenService.setWebcamToken(this.tokens.webcam);
 		this.tokenService.setScreenToken(this.tokens.screen);
 
-		setTimeout(async () => {
-
-			await this.connectToSession();
-			// Workaround, firefox does not have audio when publisher join with muted camera
-			if (this.platformService.isFirefox() && !this.localUsersService.hasWebcamVideoActive()) {
-				this.openViduWebRTCService.publishWebcamVideo(true);
-				this.openViduWebRTCService.publishWebcamVideo(false);
-			}
-		}, 50);
+		await this.connectToSession();
+		// Workaround, firefox does not have audio when publisher join with muted camera
+		if (this.platformService.isFirefox() && !this.localUsersService.hasWebcamVideoActive()) {
+			this.openViduWebRTCService.publishWebcamVideo(true);
+			this.openViduWebRTCService.publishWebcamVideo(false);
+		}
 
 		this._session.emit(this.session);
-
-
 	}
 
 	ngOnDestroy() {
