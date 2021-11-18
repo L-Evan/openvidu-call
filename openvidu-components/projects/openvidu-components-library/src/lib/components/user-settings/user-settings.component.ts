@@ -56,7 +56,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 		private deviceSrv: DeviceService,
 		private loggerSrv: LoggerService,
 		private openViduWebRTCService: WebrtcService,
-		private localUsersService: LocalUserService,
+		private localUserService: LocalUserService,
 		private storageSrv: StorageService
 		) {
 			this.log = this.loggerSrv.get('UserSettingsComponent');
@@ -69,7 +69,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	async ngOnInit() {
-		this.openViduWebRTCService.initialize();
 		this.subscribeToLocalUsersEvents();
 		this.initNicknameAndSubscribeToChanges();
 		this.columns = window.innerWidth > 900 ? 2 : 1;
@@ -137,23 +136,23 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 		this.isVideoActive = !this.isVideoActive;
 		this.openViduWebRTCService.publishWebcamVideo(this.isVideoActive);
 
-		if (this.localUsersService.areBothConnected()) {
-			this.localUsersService.disableWebcamUser();
+		if (this.localUserService.areBothConnected()) {
+			this.localUserService.disableWebcamUser();
 			this.openViduWebRTCService.publishScreenAudio(this.isAudioActive);
-		} else if (this.localUsersService.isOnlyScreenConnected()) {
-			this.localUsersService.enableWebcamUser();
+		} else if (this.localUserService.isOnlyScreenConnected()) {
+			this.localUserService.enableWebcamUser();
 		}
 	}
 
 	toggleScreenShare() {
 		// Disabling screenShare
-		if (this.localUsersService.areBothConnected()) {
-			this.localUsersService.disableScreenUser();
+		if (this.localUserService.areBothConnected()) {
+			this.localUserService.disableScreenUser();
 			return;
 		}
 
 		// Enabling screenShare
-		if (this.localUsersService.isOnlyWebcamConnected()) {
+		if (this.localUserService.isOnlyWebcamConnected()) {
 			const screenPublisher = this.initScreenPublisher();
 
 			screenPublisher.on('accessAllowed', (event) => {
@@ -164,9 +163,9 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 						this.log.d('Clicked native stop button. Stopping screen sharing');
 						this.toggleScreenShare();
 					});
-				this.localUsersService.enableScreenUser(screenPublisher);
-				if (!this.localUsersService.hasWebcamVideoActive()) {
-					this.localUsersService.disableWebcamUser();
+				this.localUserService.enableScreenUser(screenPublisher);
+				if (!this.localUserService.hasWebcamVideoActive()) {
+					this.localUserService.disableWebcamUser();
 				}
 			});
 
@@ -179,8 +178,8 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 		}
 
 		// Disabling screnShare and enabling webcam
-		this.localUsersService.enableWebcamUser();
-		this.localUsersService.disableScreenUser();
+		this.localUserService.enableWebcamUser();
+		this.localUserService.disableScreenUser();
 	}
 
 	toggleMic() {
@@ -192,10 +191,10 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
 		const nickname = this.storageSrv.get(Storage.USER_NICKNAME) || this.generateRandomNickname();
 		this.nicknameFormControl.setValue(nickname);
-		this.localUsersService.updateUsersNickname(nickname);
+		this.localUserService.updateUsersNickname(nickname);
 
 		this.nicknameFormControl.valueChanges.subscribe((value) => {
-			this.localUsersService.updateUsersNickname(value);
+			this.localUserService.updateUsersNickname(value);
 			this.storageSrv.set(Storage.USER_NICKNAME, value);
 		});
 	}
@@ -240,23 +239,23 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 	private initScreenPublisher(): Publisher {
 		const videoSource = ScreenType.SCREEN;
 		const audioSource = this.hasAudioDevices ? undefined : null;
-		const willThereBeWebcam = this.localUsersService.isWebCamEnabled() && this.localUsersService.hasWebcamVideoActive();
+		const willThereBeWebcam = this.localUserService.isWebCamEnabled() && this.localUserService.hasWebcamVideoActive();
 		const hasAudio = willThereBeWebcam ? false : this.hasAudioDevices && this.isAudioActive;
 		const properties = this.openViduWebRTCService.createPublisherProperties(videoSource, audioSource, true, hasAudio, false);
 		return this.openViduWebRTCService.initPublisher(undefined, properties);
 	}
 
 	private publishAudio(audio: boolean) {
-		this.localUsersService.isWebCamEnabled()
+		this.localUserService.isWebCamEnabled()
 			? this.openViduWebRTCService.publishWebcamAudio(audio)
 			: this.openViduWebRTCService.publishScreenAudio(audio);
 	}
 
 	private subscribeToLocalUsersEvents() {
-		this.oVUsersSubscription = this.localUsersService.OVUsers.subscribe((users) => {
+		this.oVUsersSubscription = this.localUserService.OVUsers.subscribe((users) => {
 			this.localUsers = users;
 		});
-		this.screenShareStateSubscription = this.localUsersService.screenShareState.subscribe((enabled) => {
+		this.screenShareStateSubscription = this.localUserService.screenShareState.subscribe((enabled) => {
 			this.screenShareEnabled = enabled;
 		});
 	}
@@ -279,11 +278,11 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 		);
 		if (this.hasAudioDevices || this.hasVideoDevices) {
 			const publisher = this.openViduWebRTCService.initPublisher(undefined, properties);
-			this.localUsersService.setWebcamPublisher(publisher);
+			this.localUserService.setWebcamPublisher(publisher);
 			this.handlePublisherSuccess(publisher);
 			this.handlePublisherError(publisher);
 		} else {
-			this.localUsersService.setWebcamPublisher(null);
+			this.localUserService.setWebcamPublisher(null);
 		}
 	}
 

@@ -1,17 +1,7 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { MatSidenav } from '@angular/material/sidenav';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
-import {
-	Publisher,
-	Subscriber,
-	Session,
-	StreamEvent,
-	StreamPropertyChangedEvent,
-	SessionDisconnectedEvent,
-	ConnectionEvent
-} from 'openvidu-browser';
+import { Subscriber, Session, StreamEvent, StreamPropertyChangedEvent, SessionDisconnectedEvent, ConnectionEvent } from 'openvidu-browser';
 
-import { UserModel } from '../../models/user.model';
 import { VideoType } from '../../models/video-type.model';
 import { ILogger } from '../../models/logger.model';
 import { UserName } from '../../models/username.model';
@@ -38,19 +28,10 @@ export class RoomComponent implements OnInit {
 	@Output() _publisher = new EventEmitter<any>();
 	@Output() _error = new EventEmitter<any>();
 
-	@ViewChild('sidenav') chatSidenav: MatSidenav;
-
-	compact = false;
-	sidenavMode: 'side' | 'over' = 'side';
 	session: Session;
 	sessionScreen: Session;
-	localUsers: UserModel[] = [];
-	remoteUsers: UserModel[] = [];
 	participantsNameList: UserName[] = [];
 	private log: ILogger;
-	private oVUsersSubscription: Subscription;
-	private remoteUsersSubscription: Subscription;
-	private chatSubscription: Subscription;
 	private remoteUserNameSubscription: Subscription;
 
 	constructor(
@@ -73,7 +54,6 @@ export class RoomComponent implements OnInit {
 	}
 
 	async ngOnInit() {
-		// this.localUserService.initialize();
 		this.session = this.openViduWebRTCService.getWebcamSession();
 		this.sessionScreen = this.openViduWebRTCService.getScreenSession();
 		this.subscribeToConnectionCreatedAndDestroyed();
@@ -83,8 +63,7 @@ export class RoomComponent implements OnInit {
 		this.subscribeToNicknameChanged();
 		this.chatService.subscribeToChat();
 		this.subscribeToReconnection();
-		this.subscribeToLocalUsers();
-		this.subscribeToRemoteUsers();
+		this.subscribeToUserNames();
 
 		this.tokenService.setWebcamToken(this.tokens.webcam);
 		this.tokenService.setScreenToken(this.tokens.screen);
@@ -108,17 +87,7 @@ export class RoomComponent implements OnInit {
 		this.localUserService.clear();
 		this.session = null;
 		this.sessionScreen = null;
-		this.localUsers = [];
-		this.remoteUsers = [];
-		if (this.oVUsersSubscription) {
-			this.oVUsersSubscription.unsubscribe();
-		}
-		if (this.remoteUsersSubscription) {
-			this.remoteUsersSubscription.unsubscribe();
-		}
-		if (this.chatSubscription) {
-			this.chatSubscription.unsubscribe();
-		}
+
 		if (this.remoteUserNameSubscription) {
 			this.remoteUserNameSubscription.unsubscribe();
 		}
@@ -225,11 +194,6 @@ export class RoomComponent implements OnInit {
 		});
 	}
 
-	// Emit publisher to webcomponent
-	emitPublisher(publisher: Publisher) {
-		this._publisher.emit(publisher);
-	}
-
 	private subscribeToStreamPropertyChange() {
 		this.session.on('streamPropertyChanged', (event: StreamPropertyChangedEvent) => {
 			const connectionId = event.stream.connection.connectionId;
@@ -269,19 +233,7 @@ export class RoomComponent implements OnInit {
 		});
 	}
 
-	private subscribeToLocalUsers() {
-		this.oVUsersSubscription = this.localUserService.OVUsers.subscribe((users: UserModel[]) => {
-			this.localUsers = users;
-			this.oVLayout.update();
-		});
-	}
-
-	private subscribeToRemoteUsers() {
-		this.remoteUsersSubscription = this.remoteUserService.remoteUsers.subscribe((users: UserModel[]) => {
-			this.remoteUsers = [...users];
-			this.oVLayout.update();
-		});
-
+	private subscribeToUserNames() {
 		this.remoteUserNameSubscription = this.remoteUserService.remoteUserNameList.subscribe((names: UserName[]) => {
 			this.participantsNameList = [...names];
 		});

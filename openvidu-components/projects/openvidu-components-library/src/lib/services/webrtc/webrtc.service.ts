@@ -34,21 +34,14 @@ export class WebrtcService {
 		private localUsersSrv: LocalUserService
 	) {
 		this.log = this.loggerSrv.get('WebRTCService');
-	}
-
-	initialize() {
 		this.OV = new OpenVidu();
-		if (this.libraryConfigSrv.isProduction()) {
-			this.OV.enableProdMode();
-		}
+		this.libraryConfigSrv.isProduction() ?? this.OV.enableProdMode();
 		this.webcamSession = this.OV.initSession();
 
-		// Avoid creating a screen session for mobile
+		// Initialize screen session only if it is not mobile platform
 		if (!this.platformService.isMobile()) {
 			this.OVScreen = new OpenVidu();
-			if (this.libraryConfigSrv.isProduction()) {
-				this.OVScreen.enableProdMode();
-			}
+			this.libraryConfigSrv.isProduction() ?? this.OVScreen.enableProdMode();
 			this.screenSession = this.OVScreen.initSession();
 		}
 	}
