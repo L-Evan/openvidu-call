@@ -63,7 +63,6 @@ export class RoomComponent implements OnInit {
 		this.subscribeToNicknameChanged();
 		this.chatService.subscribeToChat();
 		this.subscribeToReconnection();
-		this.subscribeToUserNames();
 
 		this.tokenService.setWebcamToken(this.tokens.webcam);
 		this.tokenService.setScreenToken(this.tokens.screen);
@@ -230,12 +229,6 @@ export class RoomComponent implements OnInit {
 				this.actionService.closeDialog();
 				this.leaveSession();
 			}
-		});
-	}
-
-	private subscribeToUserNames() {
-		this.remoteUserNameSubscription = this.remoteUserService.remoteUserNameList.subscribe((names: UserName[]) => {
-			this.participantsNameList = [...names];
 		});
 	}
 }

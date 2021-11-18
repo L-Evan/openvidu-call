@@ -32,8 +32,10 @@ import { RoomComponent } from './components/room/room.component';
 import { LayoutComponent } from './components/layout/layout.component';
 import { ParticipantComponent } from './components/participant/participant.component';
 import { DialogTemplateComponent } from './components/material/dialog.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 import { LinkifyPipe } from './pipes/linkify.pipe';
+import { TooltipListPipe } from './pipes/tooltip-list.pipe';
 
 import { LibConfig } from './config/lib.config';
 import { CdkOverlayContainer } from './config/custom-cdk-overlay';
@@ -62,7 +64,9 @@ import { RemoteUserService } from './services/remote-user/remote-user.service';
     LayoutComponent,
     ParticipantComponent,
     DialogTemplateComponent,
-    LinkifyPipe
+    LinkifyPipe,
+    TooltipListPipe,
+    FooterComponent
   ],
   imports: [
     CommonModule,
@@ -112,6 +116,7 @@ import { RemoteUserService } from './services/remote-user/remote-user.service';
     ChatComponent,
     RoomComponent,
     LayoutComponent,
+    FooterComponent,
     CommonModule
   ],
   entryComponents: [

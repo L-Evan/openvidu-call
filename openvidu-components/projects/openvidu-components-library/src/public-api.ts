@@ -17,5 +17,6 @@ export * from './lib/components/toolbar/toolbar.component';
 export * from './lib/components/chat/chat.component';
 export * from './lib/components/room/room.component';
 export * from './lib/components/layout/layout.component';
+export * from './lib/components/footer/footer.component';
 
 // Models
