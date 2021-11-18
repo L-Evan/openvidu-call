@@ -20,7 +20,6 @@ import { RemoteUserService } from '../../services/remote-user/remote-user.servic
 import { ChatService } from '../../services/chat/chat.service';
 import { LocalUserService } from '../../services/local-user/local-user.service';
 import { LoggerService } from '../../services/logger/logger.service';
-import { UtilsService } from '../../services/utils/utils.service';
 import { WebrtcService } from '../../services/webrtc/webrtc.service';
 import { TokenService } from '../../services/token/token.service';
 import { PlatformService } from '../../services/platform/platform.service';
@@ -28,15 +27,13 @@ import { LayoutService } from '../../services/layout/layout.service';
 import { ActionService } from '../../services/action/action.service';
 import { Signal } from '../../models/signal.model';
 
-
 @Component({
 	selector: 'ov-room',
 	templateUrl: './room.component.html',
 	styleUrls: ['./room.component.css']
 })
-
 export class RoomComponent implements OnInit {
-	@Input() tokens: {webcam:string, screen: string};
+	@Input() tokens: { webcam: string; screen: string };
 	@Output() _session = new EventEmitter<any>();
 	@Output() _publisher = new EventEmitter<any>();
 	@Output() _error = new EventEmitter<any>();
@@ -58,10 +55,9 @@ export class RoomComponent implements OnInit {
 
 	constructor(
 		private actionService: ActionService,
-		private utilsSrv: UtilsService,
-		private remoteUsersService: RemoteUserService,
+		private remoteUserService: RemoteUserService,
 		private openViduWebRTCService: WebrtcService,
-		private localUsersService: LocalUserService,
+		private localUserService: LocalUserService,
 		private loggerSrv: LoggerService,
 		private chatService: ChatService,
 		private oVLayout: LayoutService,
@@ -77,7 +73,7 @@ export class RoomComponent implements OnInit {
 	}
 
 	async ngOnInit() {
-		// this.localUsersService.initialize();
+		// this.localUserService.initialize();
 		this.session = this.openViduWebRTCService.getWebcamSession();
 		this.sessionScreen = this.openViduWebRTCService.getScreenSession();
 		this.subscribeToConnectionCreatedAndDestroyed();
@@ -95,7 +91,7 @@ export class RoomComponent implements OnInit {
 
 		await this.connectToSession();
 		// Workaround, firefox does not have audio when publisher join with muted camera
-		if (this.platformService.isFirefox() && !this.localUsersService.hasWebcamVideoActive()) {
+		if (this.platformService.isFirefox() && !this.localUserService.hasWebcamVideoActive()) {
 			this.openViduWebRTCService.publishWebcamVideo(true);
 			this.openViduWebRTCService.publishWebcamVideo(false);
 		}
@@ -107,9 +103,9 @@ export class RoomComponent implements OnInit {
 		// Reconnecting session is received in Firefox
 		// To avoid 'Connection lost' message uses session.off()
 		this.session?.off('reconnecting');
-		this.remoteUsersService.clear();
+		this.remoteUserService.clear();
 		this.oVLayout.clear();
-		this.localUsersService.clear();
+		this.localUserService.clear();
 		this.session = null;
 		this.sessionScreen = null;
 		this.localUsers = [];
@@ -128,22 +124,19 @@ export class RoomComponent implements OnInit {
 		}
 	}
 
-
 	leaveSession() {
 		this.log.d('Leaving session...');
 		this.openViduWebRTCService.disconnect();
 	}
 
-
 	//TODO Refactor connection methods move them to a service
 	private async connectToSession(): Promise<void> {
-
-		if (this.localUsersService.areBothConnected()) {
+		if (this.localUserService.areBothConnected()) {
 			await this.connectWebcamSession();
 			await this.connectScreenSession();
 			await this.openViduWebRTCService.publishWebcamPublisher();
 			await this.openViduWebRTCService.publishScreenPublisher();
-		} else if (this.localUsersService.isOnlyScreenConnected()) {
+		} else if (this.localUserService.isOnlyScreenConnected()) {
 			await this.connectScreenSession();
 			await this.openViduWebRTCService.publishScreenPublisher();
 		} else {
@@ -182,17 +175,17 @@ export class RoomComponent implements OnInit {
 				return;
 			}
 
-			const nickname: string = this.utilsSrv.getNicknameFromConnectionData(event.connection.data);
-			this.remoteUsersService.addUserName(event);
+			const nickname: string = this.remoteUserService.getNicknameFromConnectionData(event.connection.data);
+			this.remoteUserService.addUserName(event);
 
 			// Adding participant when connection is created
 			if (!nickname?.includes('_' + VideoType.SCREEN)) {
-				this.remoteUsersService.add(event, null);
+				this.remoteUserService.add(event, null);
 
 				//Sending nicnkanme signal to new participants
-				if(this.openViduWebRTCService.needSendNicknameSignal()){
-					const data = {clientData: this.localUsersService.getWebcamUserName()};
-					this.openViduWebRTCService.sendSignal(Signal.NICKNAME_CHANGED,event.connection, data);
+				if (this.openViduWebRTCService.needSendNicknameSignal()) {
+					const data = { clientData: this.localUserService.getWebcamUserName() };
+					this.openViduWebRTCService.sendSignal(Signal.NICKNAME_CHANGED, event.connection, data);
 				}
 			}
 		});
@@ -201,11 +194,11 @@ export class RoomComponent implements OnInit {
 			if (this.openViduWebRTCService.isMyOwnConnection(event.connection.connectionId)) {
 				return;
 			}
-			this.remoteUsersService.deleteUserName(event);
-			const nickname: string = this.utilsSrv.getNicknameFromConnectionData(event.connection.data);
+			this.remoteUserService.deleteUserName(event);
+			const nickname: string = this.remoteUserService.getNicknameFromConnectionData(event.connection.data);
 			// Deleting participant when connection is destroyed
 			if (!nickname?.includes('_' + VideoType.SCREEN)) {
-				this.remoteUsersService.removeUserByConnectionId(event.connection.connectionId);
+				this.remoteUserService.removeUserByConnectionId(event.connection.connectionId);
 			}
 		});
 	}
@@ -219,7 +212,7 @@ export class RoomComponent implements OnInit {
 			}
 
 			const subscriber: Subscriber = this.session.subscribe(event.stream, undefined);
-			this.remoteUsersService.add(event, subscriber);
+			this.remoteUserService.add(event, subscriber);
 			// this.oVSessionService.sendNicknameSignal(event.stream.connection);
 		});
 	}
@@ -227,7 +220,7 @@ export class RoomComponent implements OnInit {
 	private subscribeToStreamDestroyed() {
 		this.session.on('streamDestroyed', (event: StreamEvent) => {
 			const connectionId = event.stream.connection.connectionId;
-			this.remoteUsersService.removeUserByConnectionId(connectionId);
+			this.remoteUserService.removeUserByConnectionId(connectionId);
 			// event.preventDefault();
 		});
 	}
@@ -244,7 +237,7 @@ export class RoomComponent implements OnInit {
 				return;
 			}
 			if (event.changedProperty === 'videoActive') {
-				this.remoteUsersService.updateUsers();
+				this.remoteUserService.updateUsers();
 			}
 		});
 	}
@@ -255,8 +248,7 @@ export class RoomComponent implements OnInit {
 			if (this.openViduWebRTCService.isMyOwnConnection(connectionId)) {
 				return;
 			}
-			const nickname = this.utilsSrv.getNicknameFromConnectionData(event.data);
-			this.remoteUsersService.updateNickname(connectionId, nickname);
+			this.remoteUserService.updateNickname(connectionId, event.data);
 		});
 	}
 
@@ -278,19 +270,19 @@ export class RoomComponent implements OnInit {
 	}
 
 	private subscribeToLocalUsers() {
-		this.oVUsersSubscription = this.localUsersService.OVUsers.subscribe((users: UserModel[]) => {
+		this.oVUsersSubscription = this.localUserService.OVUsers.subscribe((users: UserModel[]) => {
 			this.localUsers = users;
 			this.oVLayout.update();
 		});
 	}
 
 	private subscribeToRemoteUsers() {
-		this.remoteUsersSubscription = this.remoteUsersService.remoteUsers.subscribe((users: UserModel[]) => {
+		this.remoteUsersSubscription = this.remoteUserService.remoteUsers.subscribe((users: UserModel[]) => {
 			this.remoteUsers = [...users];
 			this.oVLayout.update();
 		});
 
-		this.remoteUserNameSubscription = this.remoteUsersService.remoteUserNameList.subscribe((names: UserName[]) => {
+		this.remoteUserNameSubscription = this.remoteUserService.remoteUserNameList.subscribe((names: UserName[]) => {
 			this.participantsNameList = [...names];
 		});
 	}

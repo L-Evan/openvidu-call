@@ -43,7 +43,6 @@ import { LoggerService } from './services/logger/logger.service';
 import { PlatformService } from './services/platform/platform.service';
 import { StorageService } from './services/storage/storage.service';
 import { TokenService } from './services/token/token.service';
-import { UtilsService } from './services/utils/utils.service';
 import { LibraryConfigService } from './services/library-config/library-config.service';
 import { WebrtcService } from './services/webrtc/webrtc.service';
 import { ActionService } from './services/action/action.service';
@@ -104,7 +103,6 @@ import { RemoteUserService } from './services/remote-user/remote-user.service';
     RemoteUserService,
     StorageService,
     TokenService,
-    UtilsService,
     WebrtcService
 
   ],

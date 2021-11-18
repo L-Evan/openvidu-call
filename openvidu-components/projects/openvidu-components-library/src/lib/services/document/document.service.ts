@@ -66,4 +66,8 @@ export class DocumentService {
 			element.classList.add(LayoutClass.BIG_ELEMENT);
 		}
 	}
+
+	isSmallElement(element: HTMLElement | Element): boolean {
+		return element?.className.includes(LayoutClass.SMALL_ELEMENT);
+	}
 }

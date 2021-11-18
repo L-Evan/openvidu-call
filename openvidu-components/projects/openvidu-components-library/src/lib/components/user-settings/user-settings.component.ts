@@ -17,7 +17,6 @@ import { DeviceService } from '../../services/device/device.service';
 import { LoggerService } from '../../services/logger/logger.service';
 import { StorageService } from '../../services/storage/storage.service';
 import { LocalUserService } from '../../services/local-user/local-user.service';
-import { UtilsService } from '../../services/utils/utils.service';
 import { WebrtcService } from '../../services/webrtc/webrtc.service';
 import { ActionService } from '../../services/action/action.service';
 
@@ -54,7 +53,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private actionService: ActionService,
-		private utilsSrv: UtilsService,
 		private deviceSrv: DeviceService,
 		private loggerSrv: LoggerService,
 		private openViduWebRTCService: WebrtcService,
@@ -192,7 +190,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
 	initNicknameAndSubscribeToChanges() {
 
-		const nickname = this.storageSrv.get(Storage.USER_NICKNAME) || this.utilsSrv.generateNickname();
+		const nickname = this.storageSrv.get(Storage.USER_NICKNAME) || this.generateRandomNickname();
 		this.nicknameFormControl.setValue(nickname);
 		this.localUsersService.updateUsersNickname(nickname);
 
@@ -331,5 +329,9 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 			this.actionService.openDialog(e.name.replace(/_/g, ' '), message, true);
 			this.log.e(e.message);
 		});
+	}
+
+	private generateRandomNickname(): string {
+		return 'OpenVidu_User' + Math.floor(Math.random() * 100);
 	}
 }

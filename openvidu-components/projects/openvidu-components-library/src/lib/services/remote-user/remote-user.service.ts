@@ -9,7 +9,6 @@ import { UserName } from '../../models/username.model';
 import { ILogger } from '../../models/logger.model';
 
 import { LoggerService } from '../logger/logger.service';
-import { UtilsService } from '../utils/utils.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -24,7 +23,7 @@ export class RemoteUserService {
 
 	private log: ILogger;
 
-	constructor(private loggerSrv: LoggerService, private utilsSrv: UtilsService) {
+	constructor(private loggerSrv: LoggerService) {
 		this.log = this.loggerSrv.get('RemoteService');
 		this.remoteUsers = this._remoteUsers.asObservable();
 		this.remoteUserNameList = this._remoteUserNameList.asObservable();
@@ -35,11 +34,9 @@ export class RemoteUserService {
 	}
 
 	add(event: StreamEvent | ConnectionEvent, subscriber: Subscriber) {
-		let nickname = '';
-		let avatar = '';
 		const connectionId = (<StreamEvent>event)?.stream?.connection?.connectionId || (<ConnectionEvent>event)?.connection?.connectionId;
 		const data = (<StreamEvent>event)?.stream?.connection?.data || (<ConnectionEvent>event)?.connection?.data;
-		nickname = this.utilsSrv.getNicknameFromConnectionData(data);
+		const nickname = this.getNicknameFromConnectionData(data);
 		const newUser = new UserModel(connectionId, subscriber, nickname);
 		// Add new user (connectionCreated Event) or assign the streamManager to old user when the connnectionId exists (streamCreated Event)
 		this.addUser(newUser);
@@ -77,8 +74,9 @@ export class RemoteUserService {
 		return this.users.find((u) => u.getConnectionId() === connectionId);
 	}
 
-	updateNickname(connectionId: any, nickname: any) {
+	updateNickname(connectionId: any, data: any) {
 		const user = this.getRemoteUserByConnectionId(connectionId);
+		const nickname = this.getNicknameFromConnectionData(data);
 		user?.setNickname(nickname);
 		this._remoteUsers.next(this.users);
 
@@ -102,7 +100,7 @@ export class RemoteUserService {
 	}
 
 	addUserName(event: ConnectionEvent) {
-		const nickname = this.utilsSrv.getNicknameFromConnectionData(event.connection.data);
+		const nickname = this.getNicknameFromConnectionData(event.connection.data);
 		const connectionId = event.connection.connectionId;
 		const newUserNameList = this._remoteUserNameList.getValue();
 
@@ -115,6 +113,16 @@ export class RemoteUserService {
 		const newUserNameList: UserName[] = oldUserNameList.filter((element) => element.connectionId !== event.connection.connectionId);
 
 		this._remoteUserNameList.next(newUserNameList);
+	}
+
+	getNicknameFromConnectionData(data: string): string {
+		let nickname: string;
+		try {
+			nickname = JSON.parse(data).clientData;
+		} catch (error) {
+			nickname = 'Unknown';
+		}
+		return nickname;
 	}
 
 	private addUser(user: UserModel) {
