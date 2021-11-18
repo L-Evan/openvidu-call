@@ -8,7 +8,7 @@
 		</div>
 		<div class="message-wrap" #chatScroll>
 			<div *ngFor="let data of messageList" class="message" [ngClass]="data.isLocal ? 'right' : 'left'">
-				<img class="user-img" [src]="data.userAvatar" />
+				<img class="user-img" src="assets/images/openvidu_globe.png" />
 				<div class="msg-detail">
 					<div class="msg-info">
 						<p>{{ data.nickname }}</p>

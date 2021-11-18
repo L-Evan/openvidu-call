@@ -33,23 +33,10 @@ import { LayoutComponent } from './components/layout/layout.component';
 import { ParticipantComponent } from './components/participant/participant.component';
 import { DialogTemplateComponent } from './components/material/dialog.component';
 
-// import {
-// 	HasChatPipe,
-// 	HasAudioPipe,
-// 	HasVideoPipe,
-// 	IsAutoPublishPipe,
-// 	HasScreenSharingPipe,
-// 	HasFullscreenPipe,
-// 	HasLayoutSpeakingPipe,
-// 	HasExitPipe,
-// 	HasFooterPipe,
-// 	HasToolbarPipe
-// } from './pipes/settings.pipe';
 import { LinkifyPipe } from './pipes/linkify.pipe';
 
 import { LibConfig } from './config/lib.config';
 import { CdkOverlayContainer } from './config/custom-cdk-overlay';
-import { AvatarService } from './services/avatar/avatar.service';
 import { DeviceService } from './services/device/device.service';
 import { LocalUserService } from './services/local-user/local-user.service';
 import { LoggerService } from './services/logger/logger.service';
@@ -105,7 +92,6 @@ import { RemoteUserService } from './services/remote-user/remote-user.service';
   ],
   providers: [
     ActionService,
-    AvatarService,
     CdkOverlayContainer,
 		{ provide: OverlayContainer, useClass: CdkOverlayContainer },
     ChatService,

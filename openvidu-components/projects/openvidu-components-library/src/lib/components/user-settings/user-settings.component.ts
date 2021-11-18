@@ -7,7 +7,6 @@ import { Publisher } from 'openvidu-browser';
 
 import { ILogger } from '../../models/logger.model';
 import { CameraType, IDevice } from '../../models/device.model';
-import { AvatarType } from '../../models/chat.model';
 import { UserModel } from '../../models/user.model';
 import { Storage } from '../../models/storage.model';
 import { ScreenType } from '../../models/video-type.model';
@@ -17,7 +16,6 @@ import { NicknameMatcher } from '../../matchers/nickname.matcher';
 import { DeviceService } from '../../services/device/device.service';
 import { LoggerService } from '../../services/logger/logger.service';
 import { StorageService } from '../../services/storage/storage.service';
-import { AvatarService } from '../../services/avatar/avatar.service';
 import { LocalUserService } from '../../services/local-user/local-user.service';
 import { UtilsService } from '../../services/utils/utils.service';
 import { WebrtcService } from '../../services/webrtc/webrtc.service';
@@ -44,10 +42,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 	isAudioActive = true;
 	screenShareEnabled: boolean;
 	localUsers: UserModel[] = [];
-	openviduAvatar: string;
-	capturedAvatar: string;
-	avatarTypeEnum = AvatarType;
-	avatarSelected: AvatarType;
 	columns: number;
 
 	nicknameFormControl = new FormControl('', [Validators.maxLength(25), Validators.required]);
@@ -65,8 +59,7 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 		private loggerSrv: LoggerService,
 		private openViduWebRTCService: WebrtcService,
 		private localUsersService: LocalUserService,
-		private storageSrv: StorageService,
-		private avatarService: AvatarService
+		private storageSrv: StorageService
 		) {
 			this.log = this.loggerSrv.get('UserSettingsComponent');
 
@@ -81,7 +74,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 		this.openViduWebRTCService.initialize();
 		this.subscribeToLocalUsersEvents();
 		this.initNicknameAndSubscribeToChanges();
-		this.openviduAvatar = this.avatarService.getOpenViduAvatar();
 		this.columns = window.innerWidth > 900 ? 2 : 1;
 		await this.deviceSrv.initDevices();
 		this.setDevicesInfo();
@@ -198,10 +190,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 		this.publishAudio(this.isAudioActive);
 	}
 
-	captureAvatar() {
-		this.capturedAvatar = this.avatarService.createCapture();
-	}
-
 	initNicknameAndSubscribeToChanges() {
 
 		const nickname = this.storageSrv.get(Storage.USER_NICKNAME) || this.utilsSrv.generateNickname();
@@ -226,7 +214,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
 	joinSession() {
 		if (this.nicknameFormControl.valid) {
-			this.avatarService.setFinalAvatar(this.avatarSelected);
 			return this.onJoinClicked.emit();
 		}
 		this.scrollToBottom();
@@ -234,10 +221,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
 	close() {
 		this.onCloseClicked.emit();
-	}
-
-	onSelectAvatar(type: AvatarType) {
-		this.avatarSelected = type;
 	}
 
 	private setDevicesInfo() {

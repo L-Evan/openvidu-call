@@ -23,17 +23,7 @@ export class UserModel {
 	/**
 	 * @hidden
 	 */
-	avatar: string;
-
-	/**
-	 * @hidden
-	 */
 	local: boolean;
-
-	/**
-	 * @hidden
-	 */
-	// private randomAvatar: string;
 
 	/**
 	 * @hidden
@@ -84,17 +74,6 @@ export class UserModel {
 	 */
 	public getStreamManager(): StreamManager {
 		return this.streamManager;
-	}
-
-	/**
-	 * Return the user avatar
-	 */
-	public getAvatar(): string {
-		return this.avatar;
-	}
-
-	public setAvatar(avatar: string) {
-		this.avatar = avatar;
 	}
 
 	/**
@@ -161,5 +140,4 @@ export class UserModel {
 	public setLocal(local: boolean) {
 		this.local = local;
 	}
-
 }

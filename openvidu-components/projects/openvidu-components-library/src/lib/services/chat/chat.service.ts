@@ -10,7 +10,6 @@ import { ActionService } from '../action/action.service';
 import { WebrtcService } from '../webrtc/webrtc.service';
 import { LocalUserService } from '../local-user/local-user.service';
 import { LoggerService } from '../logger/logger.service';
-import { RemoteUserService } from '../remote-user/remote-user.service';
 import { Signal } from '../../models/signal.model';
 
 @Injectable({
@@ -30,7 +29,6 @@ export class ChatService {
 		private loggerSrv: LoggerService,
 		private openViduWebRTCService: WebrtcService,
 		private localUsersService: LocalUserService,
-		private remoteUsersService: RemoteUserService,
 		private actionService: ActionService
 	) {
 		this.log = this.loggerSrv.get('ChatService');
@@ -48,7 +46,6 @@ export class ChatService {
 				isLocal: isMyOwnConnection,
 				nickname: data.nickname,
 				message: data.message,
-				userAvatar: isMyOwnConnection ? this.localUsersService.getAvatar() : this.remoteUsersService.getUserAvatar(connectionId)
 			});
 			if (!this.isChatOpened) {
 				const notificationOptions: INotificationOptions = {

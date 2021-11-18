@@ -68,7 +68,6 @@ export class LocalUserService {
 		const connectionId = screenPublisher?.session?.connection?.connectionId;
 
 		this.screenUser = new UserModel(connectionId, screenPublisher, this.getScreenUserName());
-		this.screenUser.setAvatar(this.webcamUser.getAvatar());
 		this._screenShareState.next(true);
 
 		if (this.isWebCamEnabled()) {
@@ -90,7 +89,6 @@ export class LocalUserService {
 			this._webcamAudioActive.next(this.webcamUser.isAudioActive());
 		} else {
 			this._webcamAudioActive.next(this.hasScreenAudioActive());
-
 		}
 	}
 
@@ -133,18 +131,9 @@ export class LocalUserService {
 		return this.areBothConnected() || this.isOnlyScreenConnected();
 	}
 
-	setAvatar(avatar: string) {
-		this.webcamUser?.setAvatar(avatar);
-		this.screenUser?.setAvatar(avatar);
-	}
-
 	updateUsersNickname(nickname: string) {
 		this.webcamUser.setNickname(nickname);
 		this.screenUser?.setNickname(this.getScreenUserName());
-	}
-
-	getAvatar(): string {
-		return this.webcamUser.getAvatar();
 	}
 
 	getWebcamUserName(): string {

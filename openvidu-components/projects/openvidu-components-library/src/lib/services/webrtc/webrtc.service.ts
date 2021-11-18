@@ -44,7 +44,7 @@ export class WebrtcService {
 		this.webcamSession = this.OV.initSession();
 
 		// Avoid creating a screen session for mobile
-		if(!this.platformService.isMobile()) {
+		if (!this.platformService.isMobile()) {
 			this.OVScreen = new OpenVidu();
 			if (this.libraryConfigSrv.isProduction()) {
 				this.OVScreen.enableProdMode();
@@ -73,8 +73,7 @@ export class WebrtcService {
 		if (!!token) {
 			this.log.d('Connecting webcam session');
 			const webcamUsername = this.localUsersSrv.getWebcamUserName();
-			const webcamAvatar = this.localUsersSrv.getAvatar();
-			await this.webcamSession.connect(token, { clientData: webcamUsername, avatar: webcamAvatar });
+			await this.webcamSession.connect(token, { clientData: webcamUsername });
 		}
 	}
 	disconnectWebcamSession(): void {
@@ -89,8 +88,7 @@ export class WebrtcService {
 		if (!!token) {
 			this.log.d('Connecting screen session');
 			const screenUsername = this.localUsersSrv.getScreenUserName();
-			const webcamAvatar = this.localUsersSrv.getAvatar();
-			await this.screenSession.connect(token, { clientData: screenUsername, avatar: webcamAvatar });
+			await this.screenSession.connect(token, { clientData: screenUsername });
 		}
 	}
 	disconnectScreenSession(): void {
@@ -265,7 +263,7 @@ export class WebrtcService {
 		};
 		this.webcamSession.signal(signalOptions);
 
-		if(type === Signal.NICKNAME_CHANGED && !!this.getScreenSession().connection){
+		if (type === Signal.NICKNAME_CHANGED && !!this.getScreenSession().connection) {
 			signalOptions.data = JSON.stringify({ clientData: this.localUsersSrv.getScreenUserName() });
 			this.getScreenSession()?.signal(signalOptions);
 		}

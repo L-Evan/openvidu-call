@@ -10,7 +10,6 @@ import { ILogger } from '../../models/logger.model';
 
 import { LoggerService } from '../logger/logger.service';
 import { UtilsService } from '../utils/utils.service';
-import { AvatarService } from '../avatar/avatar.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -25,7 +24,7 @@ export class RemoteUserService {
 
 	private log: ILogger;
 
-	constructor(private loggerSrv: LoggerService, private utilsSrv: UtilsService, private avatarService: AvatarService) {
+	constructor(private loggerSrv: LoggerService, private utilsSrv: UtilsService) {
 		this.log = this.loggerSrv.get('RemoteService');
 		this.remoteUsers = this._remoteUsers.asObservable();
 		this.remoteUserNameList = this._remoteUserNameList.asObservable();
@@ -41,9 +40,7 @@ export class RemoteUserService {
 		const connectionId = (<StreamEvent>event)?.stream?.connection?.connectionId || (<ConnectionEvent>event)?.connection?.connectionId;
 		const data = (<StreamEvent>event)?.stream?.connection?.data || (<ConnectionEvent>event)?.connection?.data;
 		nickname = this.utilsSrv.getNicknameFromConnectionData(data);
-		avatar = this.avatarService.getAvatarFromConnectionData(data);
 		const newUser = new UserModel(connectionId, subscriber, nickname);
-		newUser.setAvatar(avatar);
 		// Add new user (connectionCreated Event) or assign the streamManager to old user when the connnectionId exists (streamCreated Event)
 		this.addUser(newUser);
 		this.updateUsers();
@@ -102,10 +99,6 @@ export class RemoteUserService {
 		this._remoteUserNameList = <BehaviorSubject<UserName[]>>new BehaviorSubject([]);
 		this.remoteUserNameList = this._remoteUserNameList.asObservable();
 		this.users = [];
-	}
-
-	getUserAvatar(connectionId: string): string {
-		return this.getRemoteUserByConnectionId(connectionId)?.getAvatar() || this.avatarService.getOpenViduAvatar();
 	}
 
 	addUserName(event: ConnectionEvent) {
