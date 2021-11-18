@@ -80,7 +80,8 @@
           },
           "configurations": {
             "development": {
-              "browserTarget": "openvidu-components:build:development"
+              "browserTarget": "openvidu-components:build:development",
+              "proxyConfig": "src/proxy.config.json"
             },
             "production": {
               "browserTarget": "openvidu-components:build:production"
