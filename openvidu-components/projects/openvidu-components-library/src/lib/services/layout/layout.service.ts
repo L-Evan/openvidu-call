@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LayoutClass, OpenViduLayout, OpenViduLayoutOptions } from '../../models/layout.model';
+import { DocumentService } from '../document/document.service';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class LayoutService {
-
 	layoutWidthObs: Observable<number>;
 	private _layoutWidthObs: BehaviorSubject<number> = new BehaviorSubject(0);
 	private openviduLayout: OpenViduLayout;
 	private openviduLayoutOptions: OpenViduLayoutOptions;
 
-	constructor() {
+	constructor(private documentService: DocumentService) {
 		this.layoutWidthObs = this._layoutWidthObs.asObservable();
 	}
 
@@ -24,7 +24,7 @@ export class LayoutService {
 		} else {
 			this._initialize();
 		}
-		this._layoutWidthObs.next(this.openviduLayout.getLayoutWidth());
+		this.sendLayoutWidthEvent();
 	}
 
 	private _initialize() {
@@ -55,14 +55,13 @@ export class LayoutService {
 		if (!!this.openviduLayout) {
 			if (!timeout) {
 				this.openviduLayout.updateLayout();
-			}else {
+			} else {
 				setTimeout(() => {
 					this.openviduLayout.updateLayout();
 				}, timeout);
 			}
-			this._layoutWidthObs.next(this.openviduLayout.getLayoutWidth());
+			this.sendLayoutWidthEvent();
 		}
-
 	}
 
 	getLayout() {
@@ -71,5 +70,13 @@ export class LayoutService {
 
 	clear() {
 		this.openviduLayout = null;
+	}
+
+	private sendLayoutWidthEvent() {
+		const sidenavLayoutElement = this.documentService.getHTMLElementByClassName(
+			this.openviduLayout.getLayoutContainer(),
+			LayoutClass.SIDENAV_CONTAINER
+		);
+		this._layoutWidthObs.next(sidenavLayoutElement.clientWidth);
 	}
 }

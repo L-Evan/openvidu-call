@@ -1,6 +1,7 @@
 import { Component, HostListener, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { skip, Subscription } from 'rxjs';
+import { SidenavMode } from '../../models/layout.model';
 import { UserModel } from '../../models/user.model';
 import { ChatService } from '../../services/chat/chat.service';
 import { LayoutService } from '../../services/layout/layout.service';
@@ -14,14 +15,15 @@ export class LayoutComponent implements OnInit, OnDestroy {
 	@Input() localUsers: UserModel[];
 	@Input() remoteUsers: UserModel[];
 	@ViewChild('sidenav') chatSidenav: MatSidenav;
-	sidenavMode = '';
+	sidenavMode: SidenavMode = SidenavMode.SIDE;
 
+	private readonly SIDENAV_WIDTH_LIMIT_MODE = 790;
 	private chatSubscription: Subscription;
 	private layoutWidthSubscription: Subscription;
 
 	@HostListener('window:resize')
 	sizeChange() {
-		this.layoutService.update(100);
+		this.layoutService.update();
 	}
 
 	constructor(private layoutService: LayoutService, private chatService: ChatService) {}
@@ -51,8 +53,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
 	private subscribeToLayoutWidth() {
 		this.layoutWidthSubscription = this.layoutService.layoutWidthObs.subscribe((width) => {
-			const limitReached = width <= 790;
-			this.sidenavMode = limitReached ? 'over' : 'side';
+			this.sidenavMode = width <= this.SIDENAV_WIDTH_LIMIT_MODE ? SidenavMode.OVER : SidenavMode.SIDE;
 		});
 	}
 }

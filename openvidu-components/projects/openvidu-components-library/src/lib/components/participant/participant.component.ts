@@ -3,7 +3,6 @@ import { FormControl, Validators } from '@angular/forms';
 import { MatMenuPanel, MatMenuTrigger } from '@angular/material/menu';
 import { NicknameMatcher } from '../../matchers/nickname.matcher';
 import { VideoFullscreenIcon, VideoSizeIcon } from '../../models/icon.model';
-import { LayoutType } from '../../models/layout.model';
 import { UserModel } from '../../models/user.model';
 import { VideoType } from '../../models/video-type.model';
 import { Storage } from '../../models/storage.model';
@@ -15,6 +14,7 @@ import { LocalUserService } from '../../services/local-user/local-user.service';
 import { RemoteUserService } from '../../services/remote-user/remote-user.service';
 import { StorageService } from '../../services/storage/storage.service';
 import { Signal } from '../../models/signal.model';
+import { LayoutClass } from '../../models/layout.model';
 
 @Component({
 	selector: 'ov-participant',
@@ -99,7 +99,7 @@ export class ParticipantComponent implements OnInit {
 	}
 
 	toggleVideoSize(resetAll?) {
-		const element = this.documentService.getHTMLElementByClassName(this.streamComponent.element.nativeElement, LayoutType.ROOT_CLASS);
+		const element = this.documentService.getHTMLElementByClassName(this.streamComponent.element.nativeElement, LayoutClass.ROOT_ELEMENT);
 		if (!!resetAll) {
 			this.documentService.removeAllBigElementClass();
 			this.remoteUserService.resetUsersZoom();

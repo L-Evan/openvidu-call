@@ -1,10 +1,13 @@
-export enum LayoutType {
-	ROOT_CLASS = 'OT_root'
+export enum LayoutClass {
+	ROOT_ELEMENT = 'OT_root',
+	BIG_ELEMENT = 'OV_big',
+	SMALL_ELEMENT = 'OV_small',
+	SIDENAV_CONTAINER = 'sidenav-container'
 }
 
-export enum LayoutClass {
-	BIG_ELEMENT = 'OV_big',
-	SMALL_ELEMENT = 'OV_small'
+export enum SidenavMode {
+	OVER = 'over',
+	SIDE =  'side'
 }
 
 /**
@@ -136,8 +139,8 @@ export class OpenViduLayout {
 		this.opts = options;
 	}
 
-	getLayoutWidth(): number {
-		return this.layoutContainer?.clientWidth;
+	getLayoutContainer(): HTMLElement {
+		return this.layoutContainer
 	}
 
 	/**
