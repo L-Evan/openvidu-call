@@ -18,7 +18,7 @@ export class FooterComponent implements OnInit, OnDestroy {
 		this.subscribeToUsersName();
 	}
 	ngOnDestroy(): void {
-		this.remoteUserNameSubscription ?? this.remoteUserNameSubscription.unsubscribe();
+		if (this.remoteUserNameSubscription) this.remoteUserNameSubscription.unsubscribe();
 	}
 
 	private subscribeToUsersName() {

@@ -49,18 +49,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
 		this.layoutService.clear();
 		this.localUsers = [];
 		this.remoteUsers = [];
-		if (this.chatSubscription) {
-			this.chatSubscription.unsubscribe();
-		}
-		if (this.layoutWidthSubscription) {
-			this.layoutWidthSubscription.unsubscribe();
-		}
-		if (this.localUsersSubscription) {
-			this.localUsersSubscription.unsubscribe();
-		}
-		if (this.remoteUsersSubscription) {
-			this.remoteUsersSubscription.unsubscribe();
-		}
+		if (this.chatSubscription) this.chatSubscription.unsubscribe();
+		if (this.layoutWidthSubscription) this.layoutWidthSubscription.unsubscribe();
+		if (this.localUsersSubscription) this.localUsersSubscription.unsubscribe();
+		if (this.remoteUsersSubscription) this.remoteUsersSubscription.unsubscribe();
 	}
 
 	private subscribeToChatComponent() {

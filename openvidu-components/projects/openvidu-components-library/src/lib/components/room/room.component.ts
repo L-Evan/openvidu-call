@@ -86,10 +86,7 @@ export class RoomComponent implements OnInit {
 		this.localUserService.clear();
 		this.session = null;
 		this.sessionScreen = null;
-
-		if (this.remoteUserNameSubscription) {
-			this.remoteUserNameSubscription.unsubscribe();
-		}
+		if (this.remoteUserNameSubscription) this.remoteUserNameSubscription.unsubscribe();
 	}
 
 	leaveSession() {
