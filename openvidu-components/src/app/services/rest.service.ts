@@ -1,30 +1,24 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError } from 'rxjs';
+import { catchError, lastValueFrom } from 'rxjs';
 import { throwError as observableThrowError } from 'rxjs/internal/observable/throwError';
-
-import { ILogger } from '../../models/logger.model';
-import { LoggerService } from '../logger/logger.service';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class RestService {
-	private log: ILogger;
 	private baseHref: string;
 
-	constructor(private http: HttpClient, private loggerSrv: LoggerService) {
-		this.log = this.loggerSrv.get('RestService');
+	constructor(private http: HttpClient) {
 		this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '/' : '');
 	}
-	async getToken(sessionId: string, openviduServerUrl: string, openviduSecret: string): Promise<string> {
-		if (!!openviduServerUrl && !!openviduSecret) {
-			const _sessionId = await this.createSession(sessionId, openviduServerUrl, openviduSecret);
-			return await this.createToken(_sessionId, openviduServerUrl, openviduSecret);
-		}
+	async getToken(sessionId: string, openviduServerUrl?: string, openviduSecret?: string): Promise<string> {
+		// if (!!openviduServerUrl && !!openviduSecret) {
+		// 	const _sessionId = await this.createSession(sessionId, openviduServerUrl, openviduSecret);
+		// 	return await this.createToken(_sessionId, openviduServerUrl, openviduSecret);
+		// }
 		try {
-			this.log.d('Getting token from backend');
-			return await this.http.post<any>(this.baseHref + 'call', { sessionId }).toPromise();
+			return lastValueFrom(this.http.post<any>(this.baseHref + 'call', { sessionId }));
 		} catch (error) {
 			if (error.status === 404) {
 				throw { status: error.status, message: 'Cannot connect with backend. ' + error.url + ' not found' };
@@ -33,7 +27,7 @@ export class RestService {
 		}
 	}
 
-	createSession(sessionId: string, openviduServerUrl: string, openviduSecret: string): Promise<string> {
+	private createSession(sessionId: string, openviduServerUrl: string, openviduSecret: string): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const body = JSON.stringify({ customSessionId: sessionId });
 			const options = {
@@ -61,7 +55,7 @@ export class RestService {
 		});
 	}
 
-	createToken(sessionId: string, openviduServerUrl: string, openviduSecret: string): Promise<string> {
+	private createToken(sessionId: string, openviduServerUrl: string, openviduSecret: string): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const body = JSON.stringify({});
 			const options = {
@@ -79,7 +73,6 @@ export class RestService {
 					})
 				)
 				.subscribe((response) => {
-					this.log.d(response);
 					resolve(response.token);
 				});
 		});

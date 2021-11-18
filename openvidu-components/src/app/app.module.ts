@@ -8,7 +8,9 @@ import { environment } from 'src/environments/environment';
 
 // openvidu-components-library
 
-import { OpenviduComponentsLibraryModule, UserSettingsComponent } from 'openvidu-components-library';
+import { OpenviduComponentsLibraryModule, UserSettingsComponent, ToolbarComponent, ChatComponent, RoomComponent, LayoutComponent, FooterComponent } from 'openvidu-components-library';
+
+
 
 @NgModule({
   declarations: [
@@ -17,11 +19,15 @@ import { OpenviduComponentsLibraryModule, UserSettingsComponent } from 'openvidu
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    OpenviduComponentsLibraryModule.forRoot(environment),
-    OpenviduComponentsLibraryModule
+    OpenviduComponentsLibraryModule.forRoot(environment)
   ],
   providers: [
-    UserSettingsComponent
+    UserSettingsComponent,
+    ToolbarComponent,
+    ChatComponent,
+    RoomComponent,
+    LayoutComponent,
+    FooterComponent
   ],
   bootstrap: [AppComponent]
 })

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ExternalConfigModel, WebrtcService, LocalUserService } from 'openvidu-components-library';
+import { RestService } from './services/rest.service';
+import { WebrtcService, LocalUserService, RemoteUserService } from 'openvidu-components-library';
 
 @Component({
 	selector: 'app-root',
@@ -9,32 +10,39 @@ import { ExternalConfigModel, WebrtcService, LocalUserService } from 'openvidu-c
 export class AppComponent implements OnInit {
 	title = 'openvidu-components';
 	toolbarColor = '';
-  angularLibrary: ExternalConfigModel;
+	sessionId = 'prueba';
+	tokens: { webcam: string; screen: string };
 
+	joinSessionClicked: boolean = false;
+	closeClicked: boolean = false;
+	isSessionAlive: boolean = false;
 
-	constructor(
-		private openViduWebRTCService: WebrtcService,
-		private localUsersService: LocalUserService, ) {}
+	constructor(private restService: RestService) {}
 
-	ngOnInit() {
+	ngOnInit() {}
 
-		//TODO:
-		this.angularLibrary = new ExternalConfigModel();
-		this.angularLibrary.setOvSettings(null);
-		this.angularLibrary.setSessionName('prueba');
-		this.angularLibrary.setOvServerUrl('this.openviduServerUrl');
-		this.angularLibrary.setOvSecret('MY_SECRET');
-		this.angularLibrary.setTheme('DARK');
-		this.angularLibrary.setNickname('tester');
-		// this.angularLibrary.setTokens();
-		// if (this.angularLibrary.canJoinToSession()) {
-		// 	this.display = true;
-		// 	return;
-		// }
+	async onJoinClicked() {
+		this.tokens = {
+			webcam: await this.restService.getToken(this.sessionId),
+			screen: await this.restService.getToken(this.sessionId)
+		};
 
-		this.localUsersService.initialize();
-		this.openViduWebRTCService.initialize();
+		this.joinSessionClicked = true;
+		this.isSessionAlive = true;
+	}
+	onCloseClicked() {
+		this.closeClicked = true;
 	}
 
-	clickButton() {}
+	onMicClicked() {}
+
+	onCamClicked() {}
+
+	onScreenShareClicked() {}
+
+	onSpeakerLayoutClicked() {}
+
+	onLeaveSessionClicked() {
+		this.isSessionAlive = false;
+	}
 }
