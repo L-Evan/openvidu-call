@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostListener, OnDestroy, OnInit, Output } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { skip, Subscription } from 'rxjs';
 import { LocalUserService } from '../../services/local-user/local-user.service';
 import { TokenService } from '../../services/token/token.service';
 import { ChatService } from '../../services/chat/chat.service';
@@ -30,7 +30,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
 	session: Session;
 
-	unreadMessages: number;
+	unreadMessages: number = 0;
 	messageList: ChatMessage[] = [];
 	isChatOpened: boolean;
 	isScreenShareEnabled: boolean;
@@ -205,7 +205,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 	}
 
 	toggleSpeakerLayout() {
-		console.warn('disabled');
 		// this.onSpeakerLayoutClicked.emit();
 
 		// if (!this.localUsersService.isScreenShareEnabled()) {
@@ -280,15 +279,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 	}
 
 	private subscriberToChatMessages() {
-		this.chatMessagesSubscription = this.chatService.messagesObs.subscribe((messages) => {
+		this.chatMessagesSubscription = this.chatService.messagesObs.pipe(skip(1)).subscribe((messages) => {
 			if (!this.isChatOpened) {
-				this.unreadMessages = messages.length - this.messageList.length;
+				this.unreadMessages++;
 			}
 			this.messageList = messages;
 		});
 	}
 	private subscribeToUserMediaProperties() {
-		console.warn("sol")
 		this.screenShareStateSubscription = this.localUsersService.screenShareState.subscribe((enabled) => {
 			this.isScreenShareEnabled = enabled;
 		});
