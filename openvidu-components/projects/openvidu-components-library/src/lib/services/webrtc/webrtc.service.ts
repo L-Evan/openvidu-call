@@ -34,6 +34,10 @@ export class WebrtcService {
 		private localUsersSrv: LocalUserService
 	) {
 		this.log = this.loggerSrv.get('WebRTCService');
+		this.initialize();
+	}
+
+	initialize() {
 		this.OV = new OpenVidu();
 		if (this.libraryConfigSrv.isProduction()) this.OV.enableProdMode();
 		this.webcamSession = this.OV.initSession();

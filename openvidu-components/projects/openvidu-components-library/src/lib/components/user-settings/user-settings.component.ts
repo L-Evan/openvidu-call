@@ -60,7 +60,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 		private storageSrv: StorageService
 		) {
 			this.log = this.loggerSrv.get('UserSettingsComponent');
-
 		}
 
 	@HostListener('window:beforeunload')

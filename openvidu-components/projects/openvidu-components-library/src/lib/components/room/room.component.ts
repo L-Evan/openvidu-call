@@ -52,6 +52,9 @@ export class RoomComponent implements OnInit {
 	}
 
 	async ngOnInit() {
+		if(this.openViduWebRTCService.getWebcamSession() === null) {
+			this.openViduWebRTCService.initialize();
+		}
 		this.session = this.openViduWebRTCService.getWebcamSession();
 		this.sessionScreen = this.openViduWebRTCService.getScreenSession();
 		this.subscribeToConnectionCreatedAndDestroyed();

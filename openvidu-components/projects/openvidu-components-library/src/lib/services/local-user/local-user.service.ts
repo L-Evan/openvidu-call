@@ -24,6 +24,10 @@ export class LocalUserService {
 
 	constructor(private loggerSrv: LoggerService) {
 		this.log = this.loggerSrv.get('LocalUserService');
+		this.initialize();
+	}
+
+	initialize() {
 		this.OVUsers = this._OVUsers.asObservable();
 		this.screenShareState = this._screenShareState.asObservable();
 		this.webcamVideoActive = this._webcamVideoActive.asObservable();
