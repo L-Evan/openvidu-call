@@ -4,8 +4,11 @@
   "compilerOptions": {
     "outDir": "../../out-tsc/spec",
     "types": [
-      "jasmine"
-    ]
+      "jasmine",
+      "node"
+    ],
+    "moduleResolution": "node",
+    "experimentalDecorators": true
   },
   "files": [
     "src/test.ts"

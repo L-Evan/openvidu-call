@@ -75,6 +75,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
 		this.remoteUsersSubscription = this.remoteUserService.remoteUsers.subscribe((users) => {
 			this.remoteUsers = users;
+			this.layoutService.update();
 		});
 	}
 }

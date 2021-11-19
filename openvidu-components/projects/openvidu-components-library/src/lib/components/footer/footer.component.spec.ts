@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RemoteUserService } from '../../../public-api';
+import { TooltipListPipe } from '../../pipes/tooltip-list.pipe';
+import { RemoteUserServiceMock } from '../../services/remote-user/remote-user.service.mock';
 
 import { FooterComponent } from './footer.component';
 
@@ -8,7 +11,10 @@ describe('FooterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FooterComponent ]
+      declarations: [ FooterComponent, TooltipListPipe ],
+      providers: [
+        {provide: RemoteUserService,  useClass: RemoteUserServiceMock }
+      ]
     })
     .compileComponents();
   });

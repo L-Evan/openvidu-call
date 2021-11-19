@@ -15,9 +15,6 @@ export class TokenService {
 		this.log = this.loggerSrv.get('TokenService');
 	}
 
-	getSessionId(): string {
-		return this.sessionId;
-	}
 
 	setWebcamToken(token: string){
 		this.webcamToken = token;
@@ -27,15 +24,6 @@ export class TokenService {
 		this.screenToken = token;
 	}
 
-	// async initTokens(externalConfig: ExternalConfigModel) {
-	// 	this.log.d('Generating token...');
-	// 	await this.generateWebcamToken(this.sessionId, externalConfig?.getOvServerUrl(), externalConfig?.getOvSecret());
-	// 	// TODO: create screenToken only when user initialize the screen
-	// 	if (this.ovSettings?.hasScreenSharing()) {
-	// 		await this.generateScreenToken(this.sessionId, externalConfig?.getOvServerUrl(), externalConfig?.getOvSecret());
-	// 	}
-	// }
-
 	getWebcamToken(): string {
 		return this.webcamToken;
 	}
@@ -43,14 +31,4 @@ export class TokenService {
 	getScreenToken(): string {
 		return this.screenToken;
 	}
-
-	// private async generateWebcamToken(sessionId: string, ovUrl: string, ovSecret: string) {
-	// 	this.log.d('Generating webcam token...');
-	// 	this.webcamToken = await this.restSrv.getToken(sessionId, ovUrl, ovSecret);
-	// }
-
-	// private async generateScreenToken(sessionId: string, ovUrl: string, ovSecret: string) {
-	// 	this.log.d('Generating screen token...');
-	// 	this.screenToken = await this.restSrv.getToken(sessionId, ovUrl, ovSecret);
-	// }
 }
