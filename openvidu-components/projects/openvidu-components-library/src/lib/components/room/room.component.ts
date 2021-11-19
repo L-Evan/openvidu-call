@@ -13,7 +13,6 @@ import { LoggerService } from '../../services/logger/logger.service';
 import { WebrtcService } from '../../services/webrtc/webrtc.service';
 import { TokenService } from '../../services/token/token.service';
 import { PlatformService } from '../../services/platform/platform.service';
-import { LayoutService } from '../../services/layout/layout.service';
 import { ActionService } from '../../services/action/action.service';
 import { Signal } from '../../models/signal.model';
 
@@ -41,7 +40,6 @@ export class RoomComponent implements OnInit {
 		private localUserService: LocalUserService,
 		private loggerSrv: LoggerService,
 		private chatService: ChatService,
-		private oVLayout: LayoutService,
 		private tokenService: TokenService,
 		private platformService: PlatformService
 	) {
@@ -82,7 +80,6 @@ export class RoomComponent implements OnInit {
 		// To avoid 'Connection lost' message uses session.off()
 		this.session?.off('reconnecting');
 		this.remoteUserService.clear();
-		this.oVLayout.clear();
 		this.localUserService.clear();
 		this.session = null;
 		this.sessionScreen = null;
@@ -108,8 +105,6 @@ export class RoomComponent implements OnInit {
 			await this.connectWebcamSession();
 			await this.openViduWebRTCService.publishWebcamPublisher();
 		}
-
-		this.oVLayout.update();
 	}
 
 	//TODO Refactor connection methods move them to a service

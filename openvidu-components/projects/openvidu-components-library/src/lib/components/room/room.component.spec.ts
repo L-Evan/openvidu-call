@@ -3,7 +3,6 @@ import { ActionService } from '../../services/action/action.service';
 import { ActionServiceMock } from '../../services/action/action.service.mock';
 
 import { ChatService } from '../../services/chat/chat.service';
-import { LayoutService } from '../../services/layout/layout.service';
 import { ChatServiceMock } from '../../services/chat/chat.service.mock';
 
 import { LocalUserService } from '../../services/local-user/local-user.service';
@@ -36,8 +35,7 @@ describe('RoomComponent', () => {
 				{ provide: WebrtcService, useClass: WebrtcServiceMock },
 				{ provide: ChatService, useClass: ChatServiceMock },
         { provide: PlatformService, useClass: PlatformServiceMock },
-        { provide: TokenService, useClass: TokenServiceMock },
-        { provide: LayoutService, useClass: LayoutService }
+        { provide: TokenService, useClass: TokenServiceMock }
       ]
     })
     .compileComponents();
