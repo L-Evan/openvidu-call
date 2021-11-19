@@ -75,13 +75,12 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-
-            "browserTarget": "openvidu-components:build"
+            "browserTarget": "openvidu-components:build",
+            "proxyConfig": "src/proxy.config.json"
           },
           "configurations": {
             "development": {
-              "browserTarget": "openvidu-components:build:development",
-              "proxyConfig": "src/proxy.config.json"
+              "browserTarget": "openvidu-components:build:development"
             },
             "production": {
               "browserTarget": "openvidu-components:build:production"
