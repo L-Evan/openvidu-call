@@ -35,6 +35,17 @@
 				<mat-icon *ngIf="!isWebcamVideoEnabled" color="warn" matTooltip="Unmute your cam">videocam_off</mat-icon>
 			</button>
 
+			<!-- Change camera button -->
+			<button
+				id="switchCameraButton"
+				mat-icon-button
+				(click)="switchCamera()"
+				[disabled]="isConnectionLost"
+				*ngIf="!this.ovSettings || (hasVideoDevices && (this.ovSettings | hasVideo))"
+			>
+				<mat-icon matTooltip="Switch camera">switch_camera</mat-icon>
+			</button>
+
 			<!-- Screenshare button -->
 			<button
 				id="navScreenButton"

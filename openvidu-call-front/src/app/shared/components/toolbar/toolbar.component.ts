@@ -25,6 +25,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 	@Input() hasAudioDevices: boolean;
 	@Output() micButtonClicked = new EventEmitter<any>();
 	@Output() camButtonClicked = new EventEmitter<any>();
+	@Output() switchCamButtonClicked = new EventEmitter<any>();
 	@Output() screenShareClicked = new EventEmitter<any>();
 	@Output() layoutButtonClicked = new EventEmitter<any>();
 	@Output() leaveSessionButtonClicked = new EventEmitter<any>();
@@ -99,6 +100,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
 	toggleCamera() {
 		this.camButtonClicked.emit();
+	}
+
+	switchCamera() {
+		this.switchCamButtonClicked.emit();
 	}
 
 	toggleScreenShare() {

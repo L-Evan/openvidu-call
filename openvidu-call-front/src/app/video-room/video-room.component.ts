@@ -220,6 +220,10 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
 		this.openViduWebRTCService.publishWebcamVideo(publishVideo);
 	}
 
+	async switchCam() {
+		
+	}
+
 	async toggleScreenShare() {
 		// Disabling screenShare
 		if (this.localUsersService.areBothConnected()) {
