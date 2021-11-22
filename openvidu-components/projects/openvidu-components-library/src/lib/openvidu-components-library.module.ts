@@ -117,6 +117,7 @@ import { RemoteUserService } from './services/remote-user/remote-user.service';
     RoomComponent,
     LayoutComponent,
     FooterComponent,
+    ParticipantComponent,
     CommonModule
   ],
   entryComponents: [

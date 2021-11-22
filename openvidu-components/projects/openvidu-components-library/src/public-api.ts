@@ -10,6 +10,7 @@ export * from './lib/openvidu-components-library.module';
 export * from './lib/services/webrtc/webrtc.service';
 export * from './lib/services/local-user/local-user.service';
 export * from './lib/services/remote-user/remote-user.service';
+export * from './lib/services/chat/chat.service';
 
 // Components
 export * from './lib/components/user-settings/user-settings.component';
@@ -18,5 +19,7 @@ export * from './lib/components/chat/chat.component';
 export * from './lib/components/room/room.component';
 export * from './lib/components/layout/layout.component';
 export * from './lib/components/footer/footer.component';
+export * from './lib/components/participant/participant.component';
 
 // Models
+export * from './lib/models/user.model';
