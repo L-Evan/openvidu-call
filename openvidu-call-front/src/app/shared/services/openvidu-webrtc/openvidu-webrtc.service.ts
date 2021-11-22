@@ -168,11 +168,11 @@ export class OpenViduWebrtcService implements IOpenViduWebRTC {
 		}
 		this.log.e('Webcam publisher cannot be published');
 	}
-	unpublishWebcamPublisher(): void {
+	async unpublishWebcamPublisher(): Promise<void> {
 		const publisher = this.localUsersSrv.getWebcamPublisher();
 		if (!!publisher) {
 			this.publishScreenAudio(this.localUsersSrv.hasWebcamAudioActive());
-			this.webcamSession.unpublish(publisher);
+			await this.webcamSession.unpublish(publisher);
 		}
 	}
 	async publishScreenPublisher(): Promise<any> {

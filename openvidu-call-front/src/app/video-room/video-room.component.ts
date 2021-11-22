@@ -34,6 +34,7 @@ import { OpenViduLayoutService } from '../shared/services/layout/layout.service'
 import { TokenService } from '../shared/services/token/token.service';
 import { LocalUsersService } from '../shared/services/local-users/local-users.service';
 import { OpenViduWebrtcService } from '../shared/services/openvidu-webrtc/openvidu-webrtc.service';
+import { IDevice } from 'openvidu-ce/shared/types/device-type';
 
 @Component({
 	selector: 'app-video-room',
@@ -221,7 +222,26 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
 	}
 
 	async switchCam() {
-		
+		await this.oVDevicesService.initDevices();
+
+		const cameras: IDevice[] = this.oVDevicesService.getCameras();
+		const currentCamera = this.oVDevicesService.getCamSelected();
+		const newCameraDevice = cameras.filter(device => device.label !== 'None' && device.device !== currentCamera.device);
+
+		if (newCameraDevice.length > 0) {
+			const videoSource = newCameraDevice[0].device;
+			const mirror = this.oVDevicesService.cameraNeedsMirror(videoSource);
+
+			// Unpublish webcam
+			await this.openViduWebRTCService.unpublishWebcamPublisher();
+
+			// Replace camera device
+			await this.openViduWebRTCService.replaceTrack(videoSource, undefined, mirror);
+			this.oVDevicesService.setCamSelected(videoSource);
+
+			// Publish Webcam
+			await this.openViduWebRTCService.publishWebcamPublisher();
+		}
 	}
 
 	async toggleScreenShare() {
