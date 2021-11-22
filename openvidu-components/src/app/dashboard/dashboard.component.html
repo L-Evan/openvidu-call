@@ -37,24 +37,23 @@
 	<input type="hidden" #selection />
 
 	<div class="card-container">
-		<div class="card card-small" (click)="selection.value = 'component'" tabindex="0">
+		<div class="card card-small" (click)="goTo('toolbar')" tabindex="0">
 			<span>Toolbar Component</span>
 		</div>
 
-		<div class="card card-small" (click)="selection.value = 'material'" tabindex="0">
+		<div class="card card-small" (click)="goTo('layout')" tabindex="0">
 			<span>Layout Component</span>
 		</div>
 
-		<div class="card card-small" (click)="selection.value = 'pwa'" tabindex="0">
+		<div class="card card-small" (click)="goTo('participant')" tabindex="0">
 			<span>Participant Component</span>
 		</div>
 
-		<div class="card card-small" (click)="selection.value = 'dependency'" tabindex="0">
-
+		<div class="card card-small" (click)="goTo('chat')" tabindex="0">
 			<span>Chat Component</span>
 		</div>
 
-		<div class="card card-small" (click)="selection.value = 'test'" tabindex="0">
+		<div class="card card-small" (click)="goTo('footer')" tabindex="0">
 			<span>Footer Component</span>
 		</div>
 	</div>

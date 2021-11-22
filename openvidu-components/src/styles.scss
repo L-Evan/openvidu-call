@@ -39,3 +39,49 @@ $openvidu-components-theme: mat.define-light-theme((
 
 html, body { height: 100%; overflow: hidden;}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.toolbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  background-color: #444f5a;
+  color: white;
+  font-weight: 600;
+}
+.spacer {
+  flex: 1;
+}
+.toolbar img {
+  margin: 0 16px;
+}
+
+.toolbar #twitter-logo {
+  height: 40px;
+  margin: 0 16px;
+}
+
+.toolbar #twitter-logo:hover {
+  opacity: 0.8;
+}
+
+.back-button {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  line-height: 20px;
+  padding: 10px;
+	position: absolute;
+	top: 70px;
+  svg {
+    transform: rotate(180deg);
+  }
+}
+
+.back-button a {
+  display: flex;
+  align-items: center;
+}
