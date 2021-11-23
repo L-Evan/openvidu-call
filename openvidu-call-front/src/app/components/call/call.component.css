@@ -1,0 +1,16 @@
+#call-container {
+	background-color: #666666;
+	height: 100%;
+}
+
+#spinner {
+	position: absolute;
+    top: 40%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: -webkit-center;
+	text-align: -moz-center;
+	color: #ffffff;
+}

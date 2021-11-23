@@ -49,3 +49,5 @@
 **Thumbs.db
 
 openvidu-components/.angular/
+
+openvidu-call-front/.angular/
