@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --configuration development",
-    "lib:build": "ng build openvidu-components-library --watch",
+    "lib:serve": "ng build openvidu-components-library --watch",
+    "lib:build": "ng build openvidu-components-library --configuration production && cd ./dist/openvidu-components-library && npm pack ",
     "lib:test": "ng test openvidu-components-library --no-watch --code-coverage",
     "lib:singleTest": "ng test openvidu-components-library --include=**/action.service.spec.ts",
     "lint": "ng lint",
