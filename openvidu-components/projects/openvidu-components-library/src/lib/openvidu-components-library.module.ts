@@ -53,6 +53,7 @@ import { DocumentService } from './services/document/document.service';
 import { LayoutService } from './services/layout/layout.service';
 import { RemoteUserService } from './services/remote-user/remote-user.service';
 
+import library  from '../../package.json';
 
 @NgModule({
   declarations: [
@@ -128,7 +129,8 @@ import { RemoteUserService } from './services/remote-user/remote-user.service';
 
 export class OpenviduComponentsLibraryModule {
   static forRoot(environment): ModuleWithProviders<OpenviduComponentsLibraryModule> {
-    console.log('Library config: ', environment);
+    console.log(`openvidu-components-library version: ${library.version}`);
+    console.log(`openvidu-components-library config: ${environment}`);
     const libConfig: LibConfig = { environment };
     return {
       ngModule: OpenviduComponentsLibraryModule,
