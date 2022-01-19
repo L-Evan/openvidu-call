@@ -38,7 +38,7 @@
     "private": true,
     "scripts": {
         "build": "./node_modules/@angular/cli/bin/ng build && npm run copy:backend",
-        "build-prod": "func() { ./node_modules/@angular/cli/bin/ng build --configuration production --base-href=\"${1:-/}\" && npm run copy:backend-prod; }; func",
+        "build-prod": "func() { ./node_modules/@angular/cli/bin/ng.js build --configuration production --base-href=\"${1:-/}\" && npm run copy:backend-prod; }; func",
         "copy:backend": "cp -a dist/openvidu-call/. ../openvidu-call-back/public/",
         "copy:backend-prod": "mkdir -p ../openvidu-call-back/dist/public && cp -a dist/openvidu-call/. ../openvidu-call-back/dist/public/",
         "e2e": "ng e2e",
