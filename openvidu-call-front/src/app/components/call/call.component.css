@@ -1,6 +1,9 @@
-#call-container {
-	background-color: #666666;
+#call-container, #room-container {
 	height: 100%;
+}
+
+#user-settings-container {
+    height: inherit;
 }
 
 #spinner {
@@ -12,5 +15,5 @@
     margin: auto;
     text-align: -webkit-center;
 	text-align: -moz-center;
-	color: #ffffff;
+	color: var(--ov-primary-color);
 }

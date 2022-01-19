@@ -3,7 +3,6 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 
 import { RestService } from '../../services/rest.service';
 
-import { WebrtcService, LocalUserService, RemoteUserService } from 'openvidu-components-library';
 
 @Component({
 	selector: 'app-call',
@@ -27,8 +26,7 @@ export class CallComponent implements OnInit {
 	}
 
 	async onJoinClicked() {
-    console.log("session id =>", this.sessionId);
-    this.joinSessionClicked = true;
+    	this.joinSessionClicked = true;
 
 		this.tokens = {
 			webcam: await this.restService.getToken(this.sessionId),
@@ -37,7 +35,8 @@ export class CallComponent implements OnInit {
 
 		this.isSessionAlive = true;
 	}
-	onCloseClicked() {
+	onLeaveSessionClicked() {
+		this.isSessionAlive = false;
 		this.closeClicked = true;
 		this.router.navigate([`/`]);
 	}
@@ -50,7 +49,4 @@ export class CallComponent implements OnInit {
 
 	onSpeakerLayoutClicked() {}
 
-	onLeaveSessionClicked() {
-		this.isSessionAlive = false;
-	}
 }
