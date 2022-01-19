@@ -15,8 +15,7 @@ import {
 	UserSettingsComponent,
 	ToolbarComponent,
 	RoomComponent,
-	LayoutComponent,
-	FooterComponent
+	LayoutComponent
 } from 'openvidu-components-library';
 
 // Application Components
@@ -38,7 +37,7 @@ import { HomeComponent } from './components/home/home.component';
 		OpenviduComponentsLibraryModule.forRoot(environment),
 		AppRoutingModule // Order is important, AppRoutingModule must be the last import for useHash working
 	],
-	providers: [UserSettingsComponent, ToolbarComponent, RoomComponent, LayoutComponent, FooterComponent],
+	providers: [UserSettingsComponent, ToolbarComponent, RoomComponent, LayoutComponent],
 	bootstrap: [AppComponent]
 })
 export class AppModule {
