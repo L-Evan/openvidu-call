@@ -12,6 +12,7 @@ const openviduService = new OpenViduService();
 
 app.post('/', async (req: Request, res: Response) => {
 	let sessionId: string = req.body.sessionId;
+	let nickname: string = req.body.nickname;
 	let createdSession: Session = null;
 	console.log('Session ID received', sessionId);
 	try {
@@ -21,7 +22,7 @@ app.post('/', async (req: Request, res: Response) => {
 		return;
 	}
 	try {
-		const connection = await openviduService.createConnection(createdSession);
+		const connection = await openviduService.createConnection(createdSession, nickname);
 		res.status(200).send(JSON.stringify(connection.token));
 	} catch (error) {
 		handleError(error, res);

@@ -31,7 +31,7 @@ export class TokenService {
 		return this.sessionId;
 	}
 
-	async initTokens(externalConfig: ExternalConfigModel) {
+	async initTokens(externalConfig: ExternalConfigModel, nickname: string) {
 		// WebComponent or Angular library
 		if (!!externalConfig && externalConfig.hasTokens()) {
 			this.log.d('Received external tokens from ' + externalConfig.getComponentName());
@@ -41,10 +41,15 @@ export class TokenService {
 			return;
 		}
 		this.log.d('No external tokens received. Generating token...');
-		await this.generateWebcamToken(this.sessionId, externalConfig?.getOvServerUrl(), externalConfig?.getOvSecret());
+		await this.generateWebcamToken(this.sessionId, externalConfig?.getOvServerUrl(), externalConfig?.getOvSecret(), nickname);
 		// TODO: create screenToken only when user initialize the screen
 		if (this.ovSettings?.hasScreenSharing()) {
-			await this.generateScreenToken(this.sessionId, externalConfig?.getOvServerUrl(), externalConfig?.getOvSecret());
+			await this.generateScreenToken(
+				this.sessionId,
+				externalConfig?.getOvServerUrl(),
+				externalConfig?.getOvSecret(),
+				`${nickname}_SCREEN`
+			);
 		}
 	}
 
@@ -56,13 +61,13 @@ export class TokenService {
 		return this.screenToken;
 	}
 
-	private async generateWebcamToken(sessionId: string, ovUrl: string, ovSecret: string) {
+	private async generateWebcamToken(sessionId: string, ovUrl: string, ovSecret: string, nickname: string) {
 		this.log.d('Generating webcam token...');
-		this.webcamToken = await this.networkSrv.getToken(sessionId, ovUrl, ovSecret);
+		this.webcamToken = await this.networkSrv.getToken(sessionId, ovUrl, ovSecret, nickname);
 	}
 
-	private async generateScreenToken(sessionId: string, ovUrl: string, ovSecret: string) {
+	private async generateScreenToken(sessionId: string, ovUrl: string, ovSecret: string, nickname: string) {
 		this.log.d('Generating screen token...');
-		this.screenToken = await this.networkSrv.getToken(sessionId, ovUrl, ovSecret);
+		this.screenToken = await this.networkSrv.getToken(sessionId, ovUrl, ovSecret, nickname);
 	}
 }

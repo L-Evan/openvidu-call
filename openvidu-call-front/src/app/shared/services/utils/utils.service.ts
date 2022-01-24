@@ -115,7 +115,7 @@ export class UtilsService {
 	getNicknameFromConnectionData(data: string): string {
 		let nickname: string;
 		try {
-			nickname = JSON.parse(data).clientData;
+			nickname = JSON.parse(data.split('%/%')[0]).clientData;
 		} catch (error) {
 			nickname = 'Unknown';
 		}

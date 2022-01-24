@@ -56,7 +56,7 @@ export class AvatarService {
 	getAvatarFromConnectionData(data: string): string {
 		let avatar: string;
 		try {
-			avatar = JSON.parse(data).avatar;
+			avatar = JSON.parse(data.split('%/%')[0]).avatar;
 		} catch (error) {
 			avatar = this.getOpenViduAvatar();
 		}

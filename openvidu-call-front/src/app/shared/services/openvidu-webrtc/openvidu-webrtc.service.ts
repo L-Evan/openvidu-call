@@ -324,7 +324,7 @@ export class OpenViduWebrtcService implements IOpenViduWebRTC {
 	}
 
 	needSendNicknameSignal(): boolean {
-		const oldNickname: string = JSON.parse(this.webcamSession.connection.data).clientData;
+		const oldNickname: string = JSON.parse(this.webcamSession.connection.data.split('%/%')[0]).clientData;
 		return oldNickname !== this.localUsersSrv.getWebcamUserName();
 	}
 

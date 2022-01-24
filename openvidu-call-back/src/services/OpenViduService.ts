@@ -15,9 +15,11 @@ export class OpenViduService {
         return await this.openvidu.createSession(sessionProperties);
 	}
 
-	public async createConnection(session: Session): Promise<Connection> {
+	public async createConnection(session: Session, nickname: string): Promise<Connection> {
         console.log("Requesting token from session ", session);
-        let connectionProperties: ConnectionProperties = {};
+        let connectionProperties: ConnectionProperties = {
+            data: JSON.stringify({ openviduCustomConnectionId: nickname }),
+        };
         return await session.createConnection(connectionProperties);
     }
 }
