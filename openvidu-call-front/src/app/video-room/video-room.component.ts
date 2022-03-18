@@ -169,7 +169,7 @@ export class VideoRoomComponent implements OnInit, OnDestroy {
 		// Workaround, firefox does not have audio when publisher join with muted camera
 		if (this.utilsSrv.isFirefox() && !this.localUsersService.hasWebcamVideoActive()) {
 			this.openViduWebRTCService.publishWebcamVideo(true);
-			this.openViduWebRTCService.publishWebcamVideo(false);
+			this.openViduWebRTCService.publishWebcamAudio(false);
 		}
 	}
 
